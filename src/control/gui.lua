@@ -24,13 +24,15 @@ end
 	
 function gui.update_all()
 	for i,_ in pairs(game.players) do
-		local player = game.players[i]
-        gui.build_for_player(player)
-        local parent = mod_gui.get_frame_flow(player)
-        if not global.tacticalConstructionToggleState[player.index].toggled then
-            parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-disabled"
-        else
-            parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-enabled"
+        local player = game.players[i]
+        if player.connected == true then
+            gui.build_for_player(player)
+            local parent = mod_gui.get_frame_flow(player)
+            if not global.tacticalConstructionState[player.index].toggled then
+                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-disabled"
+            else
+                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-enabled"
+            end
         end
 	end
 end

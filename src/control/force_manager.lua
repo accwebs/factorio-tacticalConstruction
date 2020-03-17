@@ -23,12 +23,12 @@ function force_manager.create_force_name(base_force_name, player_id)
     end
 end
 
-function force_manager.fetch_player_force_from_base(base_force, player_id)
-    if not player_id or player_id == 0 then
-		return nil
-	else
-        local player_force_name = force_manager.create_force_name(base_force.name, player_id)
+function force_manager.lookup_player_force(player)
+    if force_manager.is_force_ours(player.force) == false then
+        local player_force_name = force_manager.create_force_name(player.force.name, player.index)
         return game.forces[player_force_name]
+    else
+        return player.force
     end
 end
 
@@ -56,6 +56,18 @@ function force_manager.destroy_for_player(player)
         local base_force = game.forces[base_name]
         local player_force = player.force
         game.merge_forces(player_force, base_force)
+    end
+end
+
+function force_manager.switch_player_to_force(player)
+    player.force = force_manager.lookup_player_force(player)
+end
+
+function force_manager.restore_player_original_force(player)
+    local base_name, player_id = force_manager.parse_force_name(player.force.name)
+    if player_id ~= nil then
+        local base_force = game.forces[base_name]
+        player.force = base_force
     end
 end
 

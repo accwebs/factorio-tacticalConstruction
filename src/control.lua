@@ -2,55 +2,54 @@ local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
 local function init_player(player)
-    if not global.tacticalConstructionToggleState then
-        global.tacticalConstructionToggleState = {}
+    if not global.tacticalConstructionState then
+        global.tacticalConstructionState = {}
     end
-    if global.tacticalConstructionToggleState[player.index] == nil then
-        global.tacticalConstructionToggleState[player.index] = {
+    if global.tacticalConstructionState[player.index] == nil then
+        global.tacticalConstructionState[player.index] = {
             toggled = false
         }
     end
     gui.build_for_player(player)
+    force_manager.create_for_player(player)
 end
 
-local function init_players()
-	for _, player in pairs(game.players) do
-		init_player(player)
-	end
+
+local function deinit_player(player)
+    force_manager.destroy_for_player(player)
+    if global.tacticalConstructionState[player.index] ~= nil then
+        global.tacticalConstructionState[player.index].toggled = false
+    end
 end
 
-local function clean_up_old_state()
-    for player_index, entry in pairs(global.tacticalConstructionToggleState) do
-        if entry.toggled == true then
-            local player = game.players[player_index]
-            force_manager.destroy_for_player(player)
-            global.tacticalConstructionToggleState[player.index].toggled = false
+local function purge_stale_players()
+    for _, player in pairs(game.players) do
+        if player.connected ~= true then
+            deinit_player(player)
         end
     end
 end
 
-local function on_init() 
-    init_players()
+local function on_player_joined(event)
+    init_player(game.players[event.player_index])
+    purge_stale_players()
 end
 
-local function on_player_created_or_joined(event)
-	init_player(game.players[event.player_index])
+local function on_player_left(event)
+	purge_stale_players()
 end
 
 local function on_toggle(player)
-    if not global.tacticalConstructionToggleState[player.index].toggled then
-        global.tacticalConstructionToggleState[player.index].toggled = true
-        local created_force = force_manager.create_for_player(player)
-        player.force = created_force
+    if not global.tacticalConstructionState[player.index].toggled then
+        force_manager.switch_player_to_force(player)
+        global.tacticalConstructionState[player.index].toggled = true
     else
-        global.tacticalConstructionToggleState[player.index].toggled = false
-        force_manager.destroy_for_player(player)
+        force_manager.restore_player_original_force(player)
+        global.tacticalConstructionState[player.index].toggled = false
     end
 end
 
-script.on_init(on_init)
-script.on_configuration_changed(clean_up_old_state)
-script.on_event(defines.events.on_player_created, on_player_created_or_joined )
-script.on_event(defines.events.on_player_joined_game, on_player_created_or_joined )
+script.on_event(defines.events.on_player_joined_game, on_player_joined )
+script.on_event(defines.events.on_player_left_game, on_player_left )
 force_manager.register_events()
 gui.register_events(on_toggle)
