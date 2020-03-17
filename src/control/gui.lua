@@ -4,11 +4,8 @@ local gui = {}
 
 function gui.on_click(event)
     if event.element.name == "tacticalConstructionToggleButton" then
-        if not global.tacticalConstructionToggleState[event.player_index].toggled then
-            global.tacticalConstructionToggleState[event.player_index].toggled = true
-        else
-            global.tacticalConstructionToggleState[event.player_index].toggled = false
-        end
+        local player = game.players[event.player_index]
+        gui.click_callback(player)
         gui.update_all()
 	end
 end
@@ -38,8 +35,9 @@ function gui.update_all()
 	end
 end
 
-function gui.register_events()
+function gui.register_events(click_callback)
     script.on_event(defines.events.on_gui_click, gui.on_click )
+    gui.click_callback = click_callback
 end
 
 return gui
