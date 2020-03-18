@@ -1,3 +1,4 @@
+local entity_manager = require("control.entity_manager")
 local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
@@ -7,7 +8,8 @@ local function init_player(player)
     end
     if global.tacticalConstructionState[player.index] == nil then
         global.tacticalConstructionState[player.index] = {
-            toggled = false
+            toggled = false,
+            lastPosition = {-1, -1}
         }
     end
     gui.build_for_player(player)
@@ -52,4 +54,6 @@ end
 script.on_event(defines.events.on_player_joined_game, on_player_joined )
 script.on_event(defines.events.on_player_left_game, on_player_left )
 force_manager.register_events()
+entity_manager.init(force_manager)
+entity_manager.register_events()
 gui.register_events(on_toggle)
