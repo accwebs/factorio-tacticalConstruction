@@ -9,16 +9,17 @@ local function init_player(player)
     if global.tacticalConstructionState[player.index] == nil then
         global.tacticalConstructionState[player.index] = {
             toggled = false,
-            lastPosition = {-1, -1}
+            last_surface_index = -1,
+            last_position = {-1, -1},
+            last_construction_radius = 0
         }
     end
     gui.build_for_player(player)
-    force_manager.create_for_player(player)
+    force_manager.init_player(player)
 end
 
-
 local function deinit_player(player)
-    force_manager.destroy_for_player(player)
+    force_manager.deinit_player(player)
     if global.tacticalConstructionState[player.index] ~= nil then
         global.tacticalConstructionState[player.index].toggled = false
     end
@@ -43,7 +44,7 @@ end
 
 local function on_toggle(player)
     if not global.tacticalConstructionState[player.index].toggled then
-        force_manager.switch_player_to_force(player)
+        force_manager.switch_player_to_alternative_force(player)
         global.tacticalConstructionState[player.index].toggled = true
     else
         force_manager.restore_player_original_force(player)
