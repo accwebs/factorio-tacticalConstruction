@@ -35,7 +35,7 @@ end
 
 function force_manager.init_player(player)
     local base_force_name, is_force_alternative = force_manager.parse_force_name(player.force.name)
-	local alternative_force_name = force_manager.create_alternative_force_name(base_force_name)
+    local alternative_force_name = force_manager.create_alternative_force_name(base_force_name)
     if not game.forces[alternative_force_name] then
         local base_force = game.forces[base_force_name]
         local alternative_force = game.create_force(alternative_force_name)
@@ -52,7 +52,7 @@ end
 function force_manager.deinit_player(deinit_player)
     local deinit_player_base_force_name, is_force_alternative1 = force_manager.parse_force_name(deinit_player.force.name)
     local deinit_player_alterative_force_name = force_manager.create_alternative_force_name(deinit_player_base_force_name)
-    
+
     local delete_force = true
     for _, this_player in pairs(game.players) do
         if this_player ~= deinit_player then
@@ -99,11 +99,19 @@ function force_manager.sync_single_tech_to_all_forces(technology)
     end
 end
 
-function force_manager.restore_entity_base_force(entity)
+function force_manager.restore_entity_original_force(entity)
 	local base_force_name, is_force_alternative = force_manager.parse_force_name(entity.force.name)
     if is_force_alternative == true then
         local base_force = game.forces[base_force_name]
         if base_force ~= nil then
+            -- if entity.unit_number ~= nil then
+            --     if global.tacticalConstructionRenders ~= nil then
+            --         local render_id = global.tacticalConstructionRenders[entity.unit_number]
+            --         if render_id ~= nil then
+            --             rendering.destroy(render_id)
+            --         end
+            --     end
+            -- end
             entity.force = base_force
         end
     end
@@ -114,6 +122,19 @@ function force_manager.set_entity_alternative_force(entity)
     local alternative_force = game.forces[alternative_force_name]
     if alternative_force ~= nil then
         entity.force = alternative_force
+        -- if entity.unit_number ~= nil then
+        --     local render_id = rendering.draw_circle({
+        --         color={1,0,0},
+        --         radius=0.5,
+        --         filled=true,
+        --         target=entity,
+        --         surface=entity.surface
+        --     })
+        --     if not global.tacticalConstructionRenders then
+        --         global.tacticalConstructionRenders = {}
+        --     end
+        --     global.tacticalConstructionRenders[entity.unit_number] = render_id
+        -- end
     end
 end
 

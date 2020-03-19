@@ -9,6 +9,7 @@ local function init_player(player)
     if global.tacticalConstructionState[player.index] == nil then
         global.tacticalConstructionState[player.index] = {
             toggled = false,
+            dirty = 0,
             last_surface_index = -1,
             last_position = {-1, -1},
             last_construction_radius = 0
@@ -46,9 +47,11 @@ local function on_toggle(player)
     if not global.tacticalConstructionState[player.index].toggled then
         force_manager.switch_player_to_alternative_force(player)
         global.tacticalConstructionState[player.index].toggled = true
+        entity_manager.on_toggle(player, true)
     else
         force_manager.restore_player_original_force(player)
         global.tacticalConstructionState[player.index].toggled = false
+        entity_manager.on_toggle(player, false)
     end
 end
 

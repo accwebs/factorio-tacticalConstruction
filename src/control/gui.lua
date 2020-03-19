@@ -7,7 +7,7 @@ function gui.on_click(event)
         local player = game.players[event.player_index]
         gui.click_callback(player)
         gui.update_all()
-	end
+    end
 end
 
 function gui.build_for_player(player)
@@ -15,15 +15,15 @@ function gui.build_for_player(player)
     if not parent.tacticalConstructionToggleButton then
         parent.add({
             type = "sprite-button",
-            name = "tacticalConstructionToggleButton", 
-            style = "tactical-construction-sprite-style", 
+            name = "tacticalConstructionToggleButton",
+            style = "tactical-construction-sprite-style",
             sprite = "tactical-construction-button-disabled"}
         )
     end
 end
-	
+
 function gui.update_all()
-	for i,_ in pairs(game.players) do
+    for i,_ in pairs(game.players) do
         local player = game.players[i]
         if player.connected == true then
             gui.build_for_player(player)
@@ -34,7 +34,7 @@ function gui.update_all()
                 parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-enabled"
             end
         end
-	end
+    end
 end
 
 function gui.register_events(click_callback)
