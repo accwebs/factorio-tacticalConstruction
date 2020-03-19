@@ -8,7 +8,7 @@ function entity_manager.array_is_empty(self)
 end
 
 function entity_manager.find_and_revert_entities(base_force, alternative_force, skip_still_in_range)
-    for player_index, player_state in pairs(global.tacticalConstructionState) do
+    for player_index, player_state in pairs(global.tc_player_state) do
         if player_state.dirty > 0 then
             local how_dirty_after = 0
             local surface = game.surfaces[player_state.last_surface_index]
@@ -50,7 +50,7 @@ function entity_manager.on_player_changed_position_player(player)
 
     if player.force == alternative_force then
         if character.logistic_cell ~= nil then
-            if global.tacticalConstructionState[player.index].dirty < 2 then
+            if global.tc_player_state[player.index].dirty < 2 then
                 local construction_radius = character.logistic_cell.construction_radius
 
                 local entities = player.surface.find_entities_filtered({
@@ -91,10 +91,10 @@ function entity_manager.on_player_changed_position_player(player)
                 --     entity_manager.force_manager.set_entity_alternative_force(entity)
                 -- end
 
-                global.tacticalConstructionState[player.index].dirty = 2
-                global.tacticalConstructionState[player.index].last_surface_index = player.surface.index
-                global.tacticalConstructionState[player.index].last_position = player.position
-                global.tacticalConstructionState[player.index].last_construction_radius = construction_radius
+                global.tc_player_state[player.index].dirty = 2
+                global.tc_player_state[player.index].last_surface_index = player.surface.index
+                global.tc_player_state[player.index].last_position = player.position
+                global.tc_player_state[player.index].last_construction_radius = construction_radius
             end
         end
     end

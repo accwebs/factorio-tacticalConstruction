@@ -28,7 +28,7 @@ function gui.update_all()
         if player.connected == true then
             gui.build_for_player(player)
             local parent = mod_gui.get_frame_flow(player)
-            if not global.tacticalConstructionState[player.index].toggled then
+            if not global.tc_player_state[player.index].toggled then
                 parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-disabled"
             else
                 parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-enabled"

@@ -3,11 +3,11 @@ local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
 local function init_player(player)
-    if not global.tacticalConstructionState then
-        global.tacticalConstructionState = {}
+    if not global.tc_player_state then
+        global.tc_player_state = {}
     end
-    if global.tacticalConstructionState[player.index] == nil then
-        global.tacticalConstructionState[player.index] = {
+    if global.tc_player_state[player.index] == nil then
+        global.tc_player_state[player.index] = {
             toggled = false,
             dirty = 0,
             last_surface_index = -1,
@@ -21,8 +21,8 @@ end
 
 local function deinit_player(player)
     force_manager.deinit_player(player)
-    if global.tacticalConstructionState[player.index] ~= nil then
-        global.tacticalConstructionState[player.index].toggled = false
+    if global.tc_player_state[player.index] ~= nil then
+        global.tc_player_state[player.index].toggled = false
     end
 end
 
@@ -44,13 +44,13 @@ local function on_player_left(event)
 end
 
 local function on_toggle(player)
-    if not global.tacticalConstructionState[player.index].toggled then
+    if not global.tc_player_state[player.index].toggled then
         force_manager.switch_player_to_alternative_force(player)
-        global.tacticalConstructionState[player.index].toggled = true
+        global.tc_player_state[player.index].toggled = true
         entity_manager.on_toggle(player, true)
     else
         force_manager.restore_player_original_force(player)
-        global.tacticalConstructionState[player.index].toggled = false
+        global.tc_player_state[player.index].toggled = false
         entity_manager.on_toggle(player, false)
     end
 end
