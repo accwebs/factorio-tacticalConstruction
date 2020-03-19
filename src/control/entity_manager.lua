@@ -7,7 +7,76 @@ function entity_manager.array_is_empty(self)
     return true
 end
 
-function entity_manager.find_and_revert_entities(base_force, alternative_force, skip_still_in_range)
+function entity_manager.mark_entity(entity)
+    if entity.unit_number ~= nil then
+        local render_id = rendering.draw_circle({
+            color={1,0,0},
+            radius=0.5,
+            filled=true,
+            target=entity,
+            surface=entity.surface
+        })
+        global.tc_renders[entity.unit_number] = render_id
+    end
+end
+
+function entity_manager.unmark_entity(entity)
+    if entity.unit_number ~= nil then
+        local render_id = global.tc_renders[entity.unit_number]
+        if render_id ~= nil then
+            rendering.destroy(render_id)
+        end
+    end
+
+    -- search for and delete any dangling references
+    for render_key, render_id in pairs(global.tc_renders) do
+        if rendering.is_valid(render_id) == false then
+            global.tc_renders[render_key] = nil
+        end
+    end
+end
+
+function entity_manager.set_entity_alternative_force(entity)
+    entity_manager.force_manager.set_entity_alternative_force(entity)
+    if global.tc_debug == true then
+        entity_manager.mark_entity(entity)
+    end
+end
+
+function entity_manager.restore_entity_original_force(entity)
+    if global.tc_debug == true then
+        entity_manager.unmark_entity(entity)
+    end
+    entity_manager.force_manager.restore_entity_original_force(entity)
+end
+
+function entity_manager.determine_whether_to_revert_entity(entity, surface, alternative_force, skip_still_in_range)
+    local how_dirty_after = 0
+    if skip_still_in_range == true then
+        local networks_in_range = surface.find_logistic_networks_by_construction_area(entity.position, alternative_force)
+        if entity_manager.array_is_empty(networks_in_range) == true then
+            entity_manager.restore_entity_original_force(entity)
+        else
+            how_dirty_after = 1
+        end
+    else
+        entity_manager.restore_entity_original_force(entity)
+    end
+    return how_dirty_after
+end
+
+function entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
+    for _, surface in pairs(game.surfaces) do
+        local entities = surface.find_entities_filtered({
+            force=alternative_force
+        })
+        for _, entity in pairs(entities) do
+            entity_manager.determine_whether_to_revert_entity(entity, surface, alternative_force, true)
+        end
+    end
+end
+
+function entity_manager.find_and_revert_player_range_entities(base_force, alternative_force, skip_still_in_range)
     for player_index, player_state in pairs(global.tc_player_state) do
         if player_state.dirty > 0 then
             local how_dirty_after = 0
@@ -19,15 +88,9 @@ function entity_manager.find_and_revert_entities(base_force, alternative_force, 
                     force=alternative_force
                 })
                 for _, entity in pairs(entities) do
-                    if skip_still_in_range == true then
-                        local networks_in_range = surface.find_logistic_networks_by_construction_area(entity.position, alternative_force)
-                        if entity_manager.array_is_empty(networks_in_range) == true then
-                            entity_manager.force_manager.restore_entity_original_force(entity)
-                        else
-                            how_dirty_after = 1
-                        end
-                    else
-                        entity_manager.force_manager.restore_entity_original_force(entity)
+                    local temp_dirty_result = entity_manager.determine_whether_to_revert_entity(entity, surface, alternative_force, skip_still_in_range)
+                    if temp_dirty_result > how_dirty_after then
+                        how_dirty_after = temp_dirty_result
                     end
                 end
             end
@@ -41,12 +104,20 @@ function entity_manager.on_player_changed_position(event)
     entity_manager.on_player_changed_position_player(player)
 end
 
+function entity_manager.on_built_entity(event)
+    if global.tc_debug == true then
+        if entity_manager.force_manager.is_force_alternative(event.created_entity.force) then
+            entity_manager.mark_entity(event.created_entity)
+        end
+    end
+end
+
 function entity_manager.on_player_changed_position_player(player)
     local base_force = entity_manager.force_manager.fetch_base_force(player)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
     local character = player.character
 
-    entity_manager.find_and_revert_entities(base_force, alternative_force, true)
+    entity_manager.find_and_revert_player_range_entities(base_force, alternative_force, true)
 
     if player.force == alternative_force then
         if character.logistic_cell ~= nil then
@@ -60,17 +131,8 @@ function entity_manager.on_player_changed_position_player(player)
                     force=base_force
                 })
                 for _, entity in pairs(entities) do
-                    entity_manager.force_manager.set_entity_alternative_force(entity)
+                    entity_manager.set_entity_alternative_force(entity)
                 end
-                -- local entities = player.surface.find_entities_filtered({
-                --     position=player.position,
-                --     radius=construction_radius,
-                --     type="entity-ghost",
-                --     force=alternative_force
-                -- })
-                -- for _, entity in pairs(entities) do
-                --     entity_manager.force_manager.set_entity_alternative_force(entity)
-                -- end
 
                 local entities = player.surface.find_entities_filtered({
                     position=player.position,
@@ -79,17 +141,8 @@ function entity_manager.on_player_changed_position_player(player)
                     force=base_force
                 })
                 for _, entity in pairs(entities) do
-                    entity_manager.force_manager.set_entity_alternative_force(entity)
+                    entity_manager.set_entity_alternative_force(entity)
                 end
-                -- local entities = player.surface.find_entities_filtered({
-                --     position=player.position,
-                --     radius=construction_radius,
-                --     type="tile-ghost",
-                --     force=alternative_force
-                -- })
-                -- for _, entity in pairs(entities) do
-                --     entity_manager.force_manager.set_entity_alternative_force(entity)
-                -- end
 
                 global.tc_player_state[player.index].dirty = 2
                 global.tc_player_state[player.index].last_surface_index = player.surface.index
@@ -104,7 +157,8 @@ function entity_manager.on_player_left_game(event)
     local player = game.players[event.player_index]
     local base_force = entity_manager.force_manager.fetch_base_force(player)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
-    entity_manager.find_and_revert_entities(base_force, alternative_force, false)
+    entity_manager.find_and_revert_player_range_entities(base_force, alternative_force, false)
+    entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
 end
 
 function entity_manager.on_toggle(player, new_state)
@@ -113,13 +167,16 @@ function entity_manager.on_toggle(player, new_state)
     else
         local base_force = entity_manager.force_manager.fetch_base_force(player)
         local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
-        entity_manager.find_and_revert_entities(base_force, alternative_force, false)
+        entity_manager.find_and_revert_player_range_entities(base_force, alternative_force, false)
+        entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
     end
 end
 
 function entity_manager.register_events()
     script.on_event(defines.events.on_player_changed_position, entity_manager.on_player_changed_position)
     script.on_event(defines.events.on_player_left_game, entity_manager.on_player_left_game)
+    script.on_event(defines.events.on_built_entity, entity_manager.on_built_entity)
+    script.on_event(defines.events.on_robot_built_entity, entity_manager.on_built_entity)
 end
 
 function entity_manager.init(force_manager)

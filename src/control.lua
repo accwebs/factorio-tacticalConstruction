@@ -2,6 +2,13 @@ local entity_manager = require("control.entity_manager")
 local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
+local function on_mod_init()
+    global.tc_debug = true
+    if global.tc_debug == true then
+        global.tc_renders = {}
+    end
+end
+
 local function init_player(player)
     if not global.tc_player_state then
         global.tc_player_state = {}
@@ -55,8 +62,9 @@ local function on_toggle(player)
     end
 end
 
-script.on_event(defines.events.on_player_joined_game, on_player_joined )
-script.on_event(defines.events.on_player_left_game, on_player_left )
+script.on_init(on_mod_init)
+script.on_event(defines.events.on_player_joined_game, on_player_joined)
+script.on_event(defines.events.on_player_left_game, on_player_left)
 force_manager.register_events()
 entity_manager.init(force_manager)
 entity_manager.register_events()

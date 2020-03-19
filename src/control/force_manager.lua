@@ -104,14 +104,6 @@ function force_manager.restore_entity_original_force(entity)
     if is_force_alternative == true then
         local base_force = game.forces[base_force_name]
         if base_force ~= nil then
-            -- if entity.unit_number ~= nil then
-            --     if global.tacticalConstructionRenders ~= nil then
-            --         local render_id = global.tacticalConstructionRenders[entity.unit_number]
-            --         if render_id ~= nil then
-            --             rendering.destroy(render_id)
-            --         end
-            --     end
-            -- end
             entity.force = base_force
         end
     end
@@ -122,19 +114,6 @@ function force_manager.set_entity_alternative_force(entity)
     local alternative_force = game.forces[alternative_force_name]
     if alternative_force ~= nil then
         entity.force = alternative_force
-        -- if entity.unit_number ~= nil then
-        --     local render_id = rendering.draw_circle({
-        --         color={1,0,0},
-        --         radius=0.5,
-        --         filled=true,
-        --         target=entity,
-        --         surface=entity.surface
-        --     })
-        --     if not global.tacticalConstructionRenders then
-        --         global.tacticalConstructionRenders = {}
-        --     end
-        --     global.tacticalConstructionRenders[entity.unit_number] = render_id
-        -- end
     end
 end
 
