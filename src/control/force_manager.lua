@@ -115,18 +115,52 @@ function force_manager.restore_player_original_force(player)
     end
 end
 
-function force_manager.sync_all_tech_to_force(base_force, player_force)
+function force_manager.sync_all_tech_to_force(base_force, alternative_force)
     for name, tech in pairs(base_force.technologies) do
-        player_force.technologies[name].researched = tech.researched;
+        alternative_force.technologies[name].researched = tech.researched;
+    end
+    force_manager.sync_force_bonuses(base_force, alternative_force)
+end
+
+function force_manager.sync_single_tech_to_force(technology)
+    local base_force, is_alternative = force_manager.parse_force_name(technology.force.name)
+    if is_alternative == false then
+        local alternative_force_name = force_manager.create_alternative_force_name(base_force.name)
+        local alternative_force = game.forces[alternative_force_name]
+        base_force.technologies[technology.name].researched = technology.researched
+        force_manager.sync_force_bonuses(base_force, alternative_force)
     end
 end
 
-function force_manager.sync_single_tech_to_all_forces(technology)
-    for _, force in pairs(game.forces) do
-        if force_manager.is_force_alternative(force) then
-            force.technologies[technology.name].researched = technology.researched
-        end
-    end
+function force_manager.sync_force_bonuses(base_force, alternative_force)
+    -- TODO: Figure out how to sync these??
+    -- get_ammo_damage_modifier(ammo)
+    -- set_ammo_damage_modifier(ammo, modifier)
+    -- get_gun_speed_modifier(ammo)
+    -- set_gun_speed_modifier(ammo, modifier)
+    -- get_turret_attack_modifier(turret)
+    -- set_turret_attack_modifier(turret, modifier)
+    alternative_force.manual_mining_speed_modifier = base_force.manual_mining_speed_modifier
+    alternative_force.manual_crafting_speed_modifier = base_force.manual_crafting_speed_modifier
+    alternative_force.laboratory_speed_modifier = base_force.laboratory_speed_modifier
+    alternative_force.laboratory_productivity_bonus = base_force.laboratory_productivity_bonus
+    alternative_force.worker_robots_speed_modifier = base_force.worker_robots_speed_modifier
+    alternative_force.worker_robots_battery_modifier = base_force.worker_robots_battery_modifier
+    alternative_force.following_robots_lifetime_modifier = base_force.following_robots_lifetime_modifier
+    alternative_force.character_running_speed_modifier = base_force.character_running_speed_modifier
+    alternative_force.artillery_range_modifier = base_force.artillery_range_modifier
+    alternative_force.inserter_stack_size_bonus = base_force.inserter_stack_size_bonus
+    alternative_force.stack_inserter_capacity_bonus = base_force.stack_inserter_capacity_bonus
+    alternative_force.character_build_distance_bonus = base_force.character_build_distance_bonus
+    alternative_force.character_item_drop_distance_bonus = base_force.character_item_drop_distance_bonus
+    alternative_force.character_reach_distance_bonus = base_force.character_reach_distance_bonus
+    alternative_force.character_resource_reach_distance_bonus = base_force.character_resource_reach_distance_bonus
+    alternative_force.character_item_pickup_distance_bonus = base_force.character_item_pickup_distance_bonus
+    alternative_force.character_loot_pickup_distance_bonus = base_force.character_loot_pickup_distance_bonus
+    alternative_force.character_inventory_slots_bonus = base_force.character_inventory_slots_bonus
+    alternative_force.character_health_bonus = base_force.character_health_bonus
+    alternative_force.mining_drill_productivity_bonus = base_force.mining_drill_productivity_bonus
+    alternative_force.train_braking_force_bonus = base_force.train_braking_force_bonus
 end
 
 function force_manager.restore_entity_original_force(entity)
@@ -150,7 +184,7 @@ end
 function force_manager.register_events()
     script.on_event(defines.events.on_research_finished,
         function(event)
-            force_manager.sync_single_tech_to_all_forces(event.research)
+            force_manager.sync_single_tech_to_force(event.research)
         end
     )
 end
