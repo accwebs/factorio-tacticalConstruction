@@ -74,44 +74,76 @@ function force_manager.deinit_player(deinit_player)
 end
 
 function force_manager.switch_player_robots_force(player, new_force)
+    local switched_robots = {}
+
     if player.character ~= nil then
         local player_logistic_points = player.character.get_logistic_point()
-        if type(player_logistic_points) == "table" then
-            for _, point in pairs(player_logistic_points) do
-                if point.valid == true then
-                    if point.logistic_network.valid == true then
-                        force_manager.switch_robots_force(point.logistic_network.robots, new_force)
+        if type(player_logistic_points) ~= "table" then
+            local temp = player_logistic_points
+            player_logistic_points = {}
+            player_logistic_points[1] = temp
+        end
+
+        for _, point in pairs(player_logistic_points) do
+            if point.valid == true then
+                if point.logistic_network.valid == true then
+                    if point.owner == player.character then
+                        for _, robot in pairs(point.logistic_network.robots) do
+                            switched_robots[robot] = true
+                            robot.force = new_force
+                        end
                     end
                 end
             end
-        else
-            if player_logistic_points.valid == true then
-                if player_logistic_points.logistic_network.valid == true then
-                    force_manager.switch_robots_force(player_logistic_points.logistic_network.robots, new_force)
+        end
+    end
+
+    return switched_robots
+end
+
+function force_manager.reattach_switched_robots_to_network(switched_robots, player)
+    if player.character ~= nil then
+        local player_logistic_points = player.character.get_logistic_point()
+        if type(player_logistic_points) ~= "table" then
+            local temp = player_logistic_points
+            player_logistic_points = {}
+            player_logistic_points[1] = temp
+        end
+
+        local correct_player_network = nil
+        for _, point in pairs(player_logistic_points) do
+            if point.valid == true then
+                if point.logistic_network.valid == true then
+                    if point.owner == player.character then
+                        correct_player_network = point.logistic_network
+                        break
+                    end
                 end
+            end
+        end
+
+        if correct_player_network ~= nil then
+            for robot, _ in pairs(switched_robots) do
+                robot.logistic_network = correct_player_network
             end
         end
     end
 end
 
-function force_manager.switch_robots_force(robots, new_force)
-    for _, robot in pairs(robots) do
-        robot.force = new_force
-    end
-end
-
 function force_manager.switch_player_to_alternative_force(player)
     local alternative_force = force_manager.fetch_alternative_force(player)
-    force_manager.switch_player_robots_force(player, alternative_force)
+    local switched_robots = force_manager.switch_player_robots_force(player, alternative_force)
     player.force = alternative_force
+    force_manager.reattach_switched_robots_to_network(switched_robots, player)
 end
 
 function force_manager.restore_player_original_force(player)
     local base_name, player_id = force_manager.parse_force_name(player.force.name)
     if player_id ~= nil then
         local base_force = game.forces[base_name]
-        force_manager.switch_player_robots_force(player, base_force)
+        local switched_robots = force_manager.switch_player_robots_force(player, base_force)
         player.force = base_force
+        force_manager.reattach_switched_robots_to_network(switched_robots, player)
     end
 end
 
