@@ -11,7 +11,7 @@ function entity_manager.mark_entity(entity)
     if entity.unit_number ~= nil then
         local render_id = rendering.draw_circle({
             color={1,0,0},
-            radius=0.5,
+            radius=0.25,
             filled=true,
             target=entity,
             surface=entity.surface
@@ -57,7 +57,24 @@ function entity_manager.determine_whether_to_revert_entity(entity, surface, alte
         if entity_manager.array_is_empty(networks_in_range) == true then
             entity_manager.restore_entity_original_force(entity)
         else
-            how_dirty_after = 1
+            local player_owned_in_range = false
+            for _, network in pairs(networks_in_range) do
+                for _, player in pairs(game.players) do
+                    if player.connected == true then
+                        if player.character ~= nil then
+                            if entity_manager.force_manager.is_logistic_network_player_owned(player, network) then
+                                player_owned_in_range = true
+                                break
+                            end
+                        end
+                    end
+                end
+            end
+            if player_owned_in_range then
+                how_dirty_after = 1
+            else
+                entity_manager.restore_entity_original_force(entity)
+            end
         end
     else
         entity_manager.restore_entity_original_force(entity)
@@ -83,8 +100,7 @@ function entity_manager.find_and_revert_player_range_entities(base_force, altern
             local surface = game.surfaces[player_state.last_surface_index]
             if surface ~= nil then
                 local entities = surface.find_entities_filtered({
-                    position=player_state.last_position,
-                    radius=player_state.last_construction_radius,
+                    area=last_bounding_box,
                     force=alternative_force
                 })
                 for _, entity in pairs(entities) do
@@ -123,10 +139,19 @@ function entity_manager.on_player_changed_position_player(player)
         if character.logistic_cell ~= nil then
             if global.tc_player_state[player.index].dirty < 2 then
                 local construction_radius = character.logistic_cell.construction_radius
+                local bounding_box = {
+                    {
+                        player.position.x - construction_radius,
+                        player.position.y - construction_radius
+                    },
+                    {
+                        player.position.x + construction_radius,
+                        player.position.y + construction_radius
+                    }
+                }
 
                 local entities = player.surface.find_entities_filtered({
-                    position=player.position,
-                    radius=construction_radius,
+                    area=bounding_box,
                     type="entity-ghost",
                     force=base_force
                 })
@@ -135,8 +160,7 @@ function entity_manager.on_player_changed_position_player(player)
                 end
 
                 local entities = player.surface.find_entities_filtered({
-                    position=player.position,
-                    radius=construction_radius,
+                    area=bounding_box,
                     type="tile-ghost",
                     force=base_force
                 })
@@ -146,8 +170,7 @@ function entity_manager.on_player_changed_position_player(player)
 
                 global.tc_player_state[player.index].dirty = 2
                 global.tc_player_state[player.index].last_surface_index = player.surface.index
-                global.tc_player_state[player.index].last_position = player.position
-                global.tc_player_state[player.index].last_construction_radius = construction_radius
+                global.tc_player_state[player.index].last_bounding_box = bounding_box
             end
         end
     end

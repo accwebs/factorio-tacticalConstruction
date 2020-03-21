@@ -18,8 +18,7 @@ local function init_player(player)
             toggled = false,
             dirty = 0,
             last_surface_index = -1,
-            last_position = {-1, -1},
-            last_construction_radius = 0
+            last_bounding_box = {{-1, -1}, {-1, -1}}
         }
     end
     gui.build_for_player(player)
