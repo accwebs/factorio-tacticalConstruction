@@ -51,31 +51,33 @@ function entity_manager.restore_entity_original_force(entity)
 end
 
 function entity_manager.revert_entity_if_not_in_player_range(entity, surface, alternative_force)
-    local how_dirty_after = 0
-    local networks_in_range = surface.find_logistic_networks_by_construction_area(entity.position, alternative_force)
-    if entity_manager.array_is_empty(networks_in_range) == true then
-        entity_manager.restore_entity_original_force(entity)
-    else
-        local player_owned_in_range = false
-        for _, network in pairs(networks_in_range) do
-            for _, player in pairs(game.players) do
-                if player.connected == true then
-                    if player.character ~= nil then
-                        if entity_manager.force_manager.is_logistic_network_player_owned(player, network) then
-                            player_owned_in_range = true
-                            break
-                        end
-                    end
-                end
-            end
-        end
-        if player_owned_in_range then
-            how_dirty_after = 1
-        else
-            entity_manager.restore_entity_original_force(entity)
-        end
-    end
-    return how_dirty_after
+    entity_manager.restore_entity_original_force(entity)
+    return 1
+    -- local how_dirty_after = 0
+    -- local networks_in_range = surface.find_logistic_networks_by_construction_area(entity.position, alternative_force)
+    -- if entity_manager.array_is_empty(networks_in_range) == true then
+    --     entity_manager.restore_entity_original_force(entity)
+    -- else
+    --     local player_owned_in_range = false
+    --     for _, network in pairs(networks_in_range) do
+    --         for _, player in pairs(game.players) do
+    --             if player.connected == true then
+    --                 if player.character ~= nil then
+    --                     if entity_manager.force_manager.is_logistic_network_player_owned(player, network) then
+    --                         player_owned_in_range = true
+    --                         break
+    --                     end
+    --                 end
+    --             end
+    --         end
+    --     end
+    --     if player_owned_in_range then
+    --         how_dirty_after = 1
+    --     else
+    --         entity_manager.restore_entity_original_force(entity)
+    --     end
+    -- end
+    -- return how_dirty_after
 end
 
 function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
