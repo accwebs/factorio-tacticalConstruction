@@ -3,7 +3,7 @@ local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
 local function on_mod_init()
-    global.tc_debug = true
+    global.tc_debug = false
     if global.tc_debug == true then
         global.tc_renders = {}
     end
