@@ -140,13 +140,13 @@ function entity_manager.on_player_changed_position_player(player)
             if global.tc_player_state[player.index].dirty < 2 then
                 local construction_radius = character.logistic_cell.construction_radius
                 local bounding_box = {
-                    {
-                        player.position.x - construction_radius,
-                        player.position.y - construction_radius
+                    left_top={
+                        x=player.position.x - construction_radius,
+                        y=player.position.y - construction_radius
                     },
-                    {
-                        player.position.x + construction_radius,
-                        player.position.y + construction_radius
+                    right_bottom={
+                        x=player.position.x + construction_radius,
+                        y=player.position.y + construction_radius
                     }
                 }
 
