@@ -78,16 +78,16 @@ function entity_manager.revert_entity_if_not_in_player_range(entity, surface, al
     return how_dirty_after
 end
 
--- function entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
---     for _, surface in pairs(game.surfaces) do
---         local entities = surface.find_entities_filtered({
---             force=alternative_force
---         })
---         for _, entity in pairs(entities) do
---             entity_manager.determine_whether_to_revert_entity(entity, surface, alternative_force, true)
---         end
---     end
--- end
+function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+    for _, surface in pairs(game.surfaces) do
+        local entities = surface.find_entities_filtered({
+            force=alternative_force
+        })
+        for _, entity in pairs(entities) do
+            entity_manager.restore_entity_original_force(entity)
+        end
+    end
+end
 
 function entity_manager.subtract_rect_compute_top(rect, subtracted)
     return {
@@ -304,7 +304,7 @@ function entity_manager.on_player_left_game(event)
     local base_force = entity_manager.force_manager.fetch_base_force(player)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
     entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
-    --entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
+    entity_manager.find_and_revert_all_entities(base_force, alternative_force)
 end
 
 function entity_manager.on_toggle(player, new_state)
@@ -314,7 +314,7 @@ function entity_manager.on_toggle(player, new_state)
         local base_force = entity_manager.force_manager.fetch_base_force(player)
         local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
         entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
-        --entity_manager.find_and_revert_out_of_range_entities(base_force, alternative_force)
+        entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     end
 end
 
