@@ -73,6 +73,25 @@ function force_manager.deinit_player(deinit_player)
     end
 end
 
+function force_manager.is_logistic_network_player_owned(player, logistic_network)
+    local good_network = 0
+    for _, cell in pairs(logistic_network.cells) do
+        if cell.valid == true then
+            if cell.owner == player.character then
+                good_network = good_network + 1
+            else
+                good_network = 0
+                break
+            end
+        end
+    end
+    if good_network > 0 then
+        return true
+    else
+        return false
+    end
+end
+
 function force_manager.switch_player_robots_force(player, new_force)
     local switched_robots = {}
 
@@ -87,7 +106,7 @@ function force_manager.switch_player_robots_force(player, new_force)
         for _, point in pairs(player_logistic_points) do
             if point.valid == true then
                 if point.logistic_network.valid == true then
-                    if point.owner == player.character then
+                    if force_manager.is_logistic_network_player_owned(player, point.logistic_network) then
                         for _, robot in pairs(point.logistic_network.robots) do
                             switched_robots[robot] = true
                             robot.force = new_force
@@ -114,7 +133,7 @@ function force_manager.reattach_switched_robots_to_network(switched_robots, play
         for _, point in pairs(player_logistic_points) do
             if point.valid == true then
                 if point.logistic_network.valid == true then
-                    if point.owner == player.character then
+                    if force_manager.is_logistic_network_player_owned(player, point.logistic_network) then
                         correct_player_network = point.logistic_network
                         break
                     end
