@@ -100,7 +100,7 @@ function entity_manager.find_and_revert_player_range_entities(base_force, altern
             local surface = game.surfaces[player_state.last_surface_index]
             if surface ~= nil then
                 local entities = surface.find_entities_filtered({
-                    area=last_bounding_box,
+                    area=player_state.last_bounding_box,
                     force=alternative_force
                 })
                 for _, entity in pairs(entities) do
