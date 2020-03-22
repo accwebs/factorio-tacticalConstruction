@@ -174,8 +174,9 @@ function force_manager.sync_all_tech_to_force(base_force, alternative_force)
 end
 
 function force_manager.sync_single_tech_to_force(technology)
-    local base_force, is_alternative = force_manager.parse_force_name(technology.force.name)
+    local base_force_name, is_alternative = force_manager.parse_force_name(technology.force.name)
     if is_alternative == false then
+        local base_force = game.forces[base_force_name]
         local alternative_force_name = force_manager.create_alternative_force_name(base_force.name)
         local alternative_force = game.forces[alternative_force_name]
         base_force.technologies[technology.name].researched = technology.researched
