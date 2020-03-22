@@ -1,10 +1,10 @@
 {
     "name": "TacticalConstruction",
-    "version": "0.0.1",
+    "version": "0.0.2",
     "title": "Tactical Construction",
     "author": "accwebs",
     "homepage": "https://github.com/accwebs/factorio-tacticalConstruction",
     "factorio_version": "0.18",
     "dependencies": ["base >= 0.18"],
-    "description": "Logistic Network Channels is an experimental that allows the player to prioritize their local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport)."
+    "description": "Tactical Construction is an experimental mod that allows the player to prioritize their local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport)."
 }
