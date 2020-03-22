@@ -1,16 +1,17 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.3
-Date: 22-03-2020
-  Improvements:
+Date: 2020-03-22
+  Changes:
     - Add cautionary warning text to mod description in info.json so people can see it in the Factorio game mod UI.
-  Fixes:
+  Bugfixes:
     - Fix script error upon technology research completion.
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.2
-Date: 21-03-2020
+Date: 2020-03-21
   Fixes:
     - Fix mod description to have correct mod name and fix related typo.
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.1
-Date: 21-03-2020
-  - Initial mod release.
+Date: 2020-03-21
+  Info:
+    - Initial mod release.
