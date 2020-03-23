@@ -149,10 +149,42 @@ function force_manager.reattach_switched_robots_to_network(switched_robots, play
     end
 end
 
+function force_manager.back_up_player_logistic_request_counts(player)
+    local output = {}
+    if player.character ~= nil then
+        local character = player.character
+        for i = 1,character.request_slot_count do
+            local slot = character.get_request_slot(i)
+            if slot then
+                output[i] = slot.count
+            end
+        end
+    end
+    return output
+end
+
+function force_manager.restore_player_logistic_request_counts(player, req_counts)
+    local output = {}
+    if player.character ~= nil then
+        local character = player.character
+        for index, correct_count in pairs(req_counts) do
+            local slot = character.get_request_slot(index)
+            if slot then
+                if slot.count ~= correct_count then
+                    slot.count = correct_count
+                    character.set_request_slot(slot, index)
+                end
+            end
+        end
+    end
+end
+
 function force_manager.switch_player_to_alternative_force(player)
     local alternative_force = force_manager.fetch_alternative_force(player)
     local switched_robots = force_manager.switch_player_robots_force(player, alternative_force)
+    local req_counts = force_manager.back_up_player_logistic_request_counts(player)
     player.force = alternative_force
+    force_manager.restore_player_logistic_request_counts(player, req_counts)
     force_manager.reattach_switched_robots_to_network(switched_robots, player)
 end
 
@@ -161,7 +193,9 @@ function force_manager.restore_player_original_force(player)
     if player_id ~= nil then
         local base_force = game.forces[base_name]
         local switched_robots = force_manager.switch_player_robots_force(player, base_force)
+        local req_counts = force_manager.back_up_player_logistic_request_counts(player)
         player.force = base_force
+        force_manager.restore_player_logistic_request_counts(player, req_counts)
         force_manager.reattach_switched_robots_to_network(switched_robots, player)
     end
 end
