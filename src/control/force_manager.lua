@@ -247,12 +247,8 @@ function force_manager.notify_deinit_player(deinit_player)
     end
 end
 
-function force_manager.register_events()
-    script.on_event(defines.events.on_research_finished,
-        function(event)
-            force_manager._sync_single_tech_to_force(event.research)
-        end
-    )
+function force_manager.notify_research_finished(event)
+    force_manager._sync_single_tech_to_force(event.research)
 end
 
 return force_manager

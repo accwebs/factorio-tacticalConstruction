@@ -49,6 +49,10 @@ local function on_player_left(event)
 	purge_stale_players()
 end
 
+local function on_research_finished(event)
+    force_manager.notify_research_finished(event)
+end
+
 local function on_toggle(player)
     if not global.tc_player_state[player.index].toggled then
         force_manager.switch_player_to_alternative_force(player)
@@ -64,7 +68,7 @@ end
 script.on_init(on_mod_init)
 script.on_event(defines.events.on_player_joined_game, on_player_joined)
 script.on_event(defines.events.on_player_left_game, on_player_left)
-force_manager.register_events()
+script.on_event(defines.events.on_research_finished, on_research_finished)
 entity_manager.init(force_manager)
 entity_manager.register_events()
 gui.register_events(on_toggle)
