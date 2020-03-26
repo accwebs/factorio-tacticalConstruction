@@ -32,7 +32,12 @@ function entity_manager.find_and_revert_all_entities(base_force, alternative_for
         end
     end
     for player_index, player_state in pairs(global.tc_player_state) do
-        player_state.dirty = 0
+        if game.players[player_index] then
+            local player_force = game.players[player_index].force
+            if player_force.name == base_force.name or player_force.name == alternative_force.name then
+                player_state.dirty = 0
+            end
+        end
     end
 end
 
