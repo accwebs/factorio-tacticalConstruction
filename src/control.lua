@@ -2,16 +2,6 @@ local entity_manager = require("control.entity_manager")
 local force_manager = require("control.force_manager")
 local gui = require("control.gui")
 
-local function on_mod_init()
-    global.tc_debug = false
-    if global.tc_debug == true then
-        global.tc_renders = {}
-    end
-    for _, player in pairs(game.players) do
-        init_player(player)
-    end
-end
-
 local function init_player(player)
     if not global.tc_player_state then
         global.tc_player_state = {}
@@ -41,6 +31,16 @@ local function purge_stale_players()
         if player.connected ~= true then
             deinit_player(player)
         end
+    end
+end
+
+local function on_mod_init()
+    global.tc_debug = false
+    if global.tc_debug == true then
+        global.tc_renders = {}
+    end
+    for _, player in pairs(game.players) do
+        init_player(player)
     end
 end
 
