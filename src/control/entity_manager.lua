@@ -36,20 +36,6 @@ function entity_manager.unmark_entity(entity)
     end
 end
 
-function entity_manager.set_entity_alternative_force(entity)
-    entity_manager.force_manager.set_entity_alternative_force(entity)
-    if global.tc_debug == true then
-        entity_manager.mark_entity(entity)
-    end
-end
-
-function entity_manager.restore_entity_original_force(entity)
-    if global.tc_debug == true then
-        entity_manager.unmark_entity(entity)
-    end
-    entity_manager.force_manager.restore_entity_original_force(entity)
-end
-
 function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     for _, surface in pairs(game.surfaces) do
         local entities = surface.find_entities_filtered({
@@ -295,6 +281,52 @@ function entity_manager.on_toggle(player, new_state)
         local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
         -- entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
         entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+    end
+end
+
+function entity_manager.restore_entity_original_force(entity)
+	local base_force_name, is_force_alternative = entity_manager.force_manager.parse_force_name(entity.force.name)
+    if is_force_alternative == true then
+        if global.tc_debug == true then
+            entity_manager.unmark_entity(entity)
+        end
+        local base_force = game.forces[base_force_name]
+        if base_force ~= nil then
+            local re_deconstruct = entity.to_be_deconstructed()
+            local re_upgrade = entity.to_be_upgraded()
+            entity.force = base_force
+            if re_deconstruct == true then
+                entity.order_deconstruction(base_force, nil)
+            end
+            if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
+                entity.order_upgrade({
+                    force=base_force,
+                    target=entity.prototype.next_upgrade
+                })
+            end
+        end
+    end
+end
+
+function entity_manager.set_entity_alternative_force(entity)
+    local alternative_force_name = entity_manager.force_manager.create_alternative_force_name(entity.force.name)
+    local alternative_force = game.forces[alternative_force_name]
+    if alternative_force ~= nil then
+        local re_deconstruct = entity.to_be_deconstructed()
+        local re_upgrade = entity.to_be_upgraded()
+        entity.force = alternative_force
+        if re_deconstruct == true then
+            entity.order_deconstruction(alternative_force, nil)
+        end
+        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
+            entity.order_upgrade({
+                force=alternative_force,
+                target=entity.prototype.next_upgrade
+            })
+        end
+        if global.tc_debug == true then
+            entity_manager.mark_entity(entity)
+        end
     end
 end
 

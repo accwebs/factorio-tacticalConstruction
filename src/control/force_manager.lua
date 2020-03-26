@@ -249,46 +249,6 @@ function force_manager.sync_force_bonuses(base_force, alternative_force)
     alternative_force.train_braking_force_bonus = base_force.train_braking_force_bonus
 end
 
-function force_manager.restore_entity_original_force(entity)
-	local base_force_name, is_force_alternative = force_manager.parse_force_name(entity.force.name)
-    if is_force_alternative == true then
-        local base_force = game.forces[base_force_name]
-        if base_force ~= nil then
-            local re_deconstruct = entity.to_be_deconstructed()
-            local re_upgrade = entity.to_be_upgraded()
-            entity.force = base_force
-            if re_deconstruct == true then
-                entity.order_deconstruction(base_force, nil)
-            end
-            if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
-                entity.order_upgrade({
-                    force=base_force,
-                    target=entity.prototype.next_upgrade
-                })
-            end
-        end
-    end
-end
-
-function force_manager.set_entity_alternative_force(entity)
-    local alternative_force_name = force_manager.create_alternative_force_name(entity.force.name)
-    local alternative_force = game.forces[alternative_force_name]
-    if alternative_force ~= nil then
-        local re_deconstruct = entity.to_be_deconstructed()
-        local re_upgrade = entity.to_be_upgraded()
-        entity.force = alternative_force
-        if re_deconstruct == true then
-            entity.order_deconstruction(alternative_force, nil)
-        end
-        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
-            entity.order_upgrade({
-                force=alternative_force,
-                target=entity.prototype.next_upgrade
-            })
-        end
-    end
-end
-
 function force_manager.register_events()
     script.on_event(defines.events.on_research_finished,
         function(event)
