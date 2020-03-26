@@ -22,11 +22,11 @@ local function init_player(player)
         }
     end
     gui.build_for_player(player)
-    force_manager.init_player(player)
+    force_manager.notify_init_player(player)
 end
 
 local function deinit_player(player)
-    force_manager.deinit_player(player)
+    force_manager.notify_deinit_player(player)
     if global.tc_player_state[player.index] ~= nil then
         global.tc_player_state[player.index].toggled = false
     end

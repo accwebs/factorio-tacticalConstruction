@@ -218,8 +218,8 @@ function entity_manager.create_player_bounding_box(position, construction_radius
 end
 
 function entity_manager.on_player_changed_position_player(player)
-    local base_force = entity_manager.force_manager.fetch_base_force(player)
-    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
+    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
     local character = player.character
 
     entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, true)
@@ -267,8 +267,8 @@ end
 
 function entity_manager.on_player_left_game(event)
     local player = game.players[event.player_index]
-    local base_force = entity_manager.force_manager.fetch_base_force(player)
-    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
+    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
     -- entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
     entity_manager.find_and_revert_all_entities(base_force, alternative_force)
 end
@@ -277,8 +277,8 @@ function entity_manager.on_toggle(player, new_state)
     if new_state == true then
         entity_manager.on_player_changed_position_player(player)
     else
-        local base_force = entity_manager.force_manager.fetch_base_force(player)
-        local alternative_force = entity_manager.force_manager.fetch_alternative_force(player)
+        local base_force = entity_manager.force_manager.fetch_base_force(player.force)
+        local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
         -- entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
         entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     end
@@ -309,8 +309,7 @@ function entity_manager.restore_entity_original_force(entity)
 end
 
 function entity_manager.set_entity_alternative_force(entity)
-    local alternative_force_name = entity_manager.force_manager.create_alternative_force_name(entity.force.name)
-    local alternative_force = game.forces[alternative_force_name]
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(entity.force)
     if alternative_force ~= nil then
         local re_deconstruct = entity.to_be_deconstructed()
         local re_upgrade = entity.to_be_upgraded()
