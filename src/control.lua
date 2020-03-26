@@ -7,6 +7,9 @@ local function on_mod_init()
     if global.tc_debug == true then
         global.tc_renders = {}
     end
+    for _, player in pairs(game.players) do
+        init_player(player)
+    end
 end
 
 local function init_player(player)
@@ -28,7 +31,6 @@ local function init_player(player)
 end
 
 local function deinit_player(player)
-    force_manager.notify_deinit_player(player)
     if global.tc_player_state[player.index] ~= nil then
         global.tc_player_state[player.index].toggled = false
     end
@@ -44,11 +46,6 @@ end
 
 local function on_player_joined(event)
     init_player(game.players[event.player_index])
-    purge_stale_players()
-end
-
-local function on_player_left(event)
-	purge_stale_players()
 end
 
 local function on_research_finished(event)
@@ -68,13 +65,13 @@ local function on_toggle(player)
 end
 
 local function garbage_collect(event)
+    purge_stale_players()
     entity_manager.garbage_collect()
     force_manager.garbage_collect()
 end
 
 script.on_init(on_mod_init)
 script.on_event(defines.events.on_player_joined_game, on_player_joined)
-script.on_event(defines.events.on_player_left_game, on_player_left)
 script.on_event(defines.events.on_research_finished, on_research_finished)
 script.on_nth_tick(7200, garbage_collect)
 entity_manager.init(force_manager)
