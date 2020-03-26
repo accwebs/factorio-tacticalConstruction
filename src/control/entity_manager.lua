@@ -1,13 +1,6 @@
 local entity_manager = {}
 
-function entity_manager.array_is_empty(self)
-    for _, _ in pairs(self) do
-        return false
-    end
-    return true
-end
-
-function entity_manager.mark_entity(entity)
+function entity_manager._debug_mark_entity(entity)
     if entity.unit_number ~= nil then
         local render_id = rendering.draw_circle({
             color={1,0,0},
@@ -20,18 +13,11 @@ function entity_manager.mark_entity(entity)
     end
 end
 
-function entity_manager.unmark_entity(entity)
+function entity_manager._debug_unmark_entity(entity)
     if entity.unit_number ~= nil then
         local render_id = global.tc_renders[entity.unit_number]
         if render_id ~= nil then
             rendering.destroy(render_id)
-        end
-    end
-
-    -- search for and delete any dangling references
-    for render_key, render_id in pairs(global.tc_renders) do
-        if rendering.is_valid(render_id) == false then
-            global.tc_renders[render_key] = nil
         end
     end
 end
@@ -42,7 +28,7 @@ function entity_manager.find_and_revert_all_entities(base_force, alternative_for
             force=alternative_force
         })
         for _, entity in pairs(entities) do
-            entity_manager.restore_entity_original_force(entity)
+            entity_manager._restore_entity_original_force(entity)
         end
     end
     for player_index, player_state in pairs(global.tc_player_state) do
@@ -50,7 +36,7 @@ function entity_manager.find_and_revert_all_entities(base_force, alternative_for
     end
 end
 
-function entity_manager.subtract_rect_compute_top(rect, subtracted)
+function entity_manager._subtract_rect_compute_top(rect, subtracted)
     return {
         left_top={
             x=rect.left_top.x,
@@ -63,7 +49,7 @@ function entity_manager.subtract_rect_compute_top(rect, subtracted)
     }
 end
 
-function entity_manager.subtract_rect_compute_left(rect, subtracted)
+function entity_manager._subtract_rect_compute_left(rect, subtracted)
     return {
         left_top={
             x=rect.left_top.x,
@@ -76,7 +62,7 @@ function entity_manager.subtract_rect_compute_left(rect, subtracted)
     }
 end
 
-function entity_manager.subtract_rect_compute_right(rect, subtracted)
+function entity_manager._subtract_rect_compute_right(rect, subtracted)
     return {
         left_top={
             x=subtracted.right_bottom.x,
@@ -89,7 +75,7 @@ function entity_manager.subtract_rect_compute_right(rect, subtracted)
     }
 end
 
-function entity_manager.subtract_rect_compute_bottom(rect, subtracted)
+function entity_manager._subtract_rect_compute_bottom(rect, subtracted)
     return {
         left_top={
             x=rect.left_top.x,
@@ -102,7 +88,7 @@ function entity_manager.subtract_rect_compute_bottom(rect, subtracted)
     }
 end
 
-function entity_manager.subtract_rect_has_no_area(rect)
+function entity_manager._subtract_rect_has_no_area(rect)
     if ((rect.right_bottom.x - rect.left_top.x) <= 0 or (rect.right_bottom.y - rect.left_top.y) <= 0) then
         return true
     else
@@ -110,7 +96,7 @@ function entity_manager.subtract_rect_has_no_area(rect)
     end
 end
 
-function entity_manager.subtract_bounding_box_from_boxes(source_boxes, box_to_subtract)
+function entity_manager._subtract_bounding_box_from_boxes(source_boxes, box_to_subtract)
     local output_boxes = {}
     for _, source_box in pairs(source_boxes) do
         if (box_to_subtract.right_bottom.x <= source_box.left_top.x or          -- subtr box's right is entirely to left of source left
@@ -119,20 +105,20 @@ function entity_manager.subtract_bounding_box_from_boxes(source_boxes, box_to_su
                 box_to_subtract.left_top.y >= source_box.right_bottom.y) then   -- subtr box's top is entirely below source bottom
             output_boxes[#output_boxes+1] = source_box  -- no overlap at all
         else
-            local top_rect = entity_manager.subtract_rect_compute_top(source_box, box_to_subtract);
-            if entity_manager.subtract_rect_has_no_area(top_rect) == false then
+            local top_rect = entity_manager._subtract_rect_compute_top(source_box, box_to_subtract);
+            if entity_manager._subtract_rect_has_no_area(top_rect) == false then
                 output_boxes[#output_boxes+1] = top_rect
             end
-            local left_rect = entity_manager.subtract_rect_compute_left(source_box, box_to_subtract);
-            if entity_manager.subtract_rect_has_no_area(left_rect) == false then
+            local left_rect = entity_manager._subtract_rect_compute_left(source_box, box_to_subtract);
+            if entity_manager._subtract_rect_has_no_area(left_rect) == false then
                 output_boxes[#output_boxes+1] = left_rect
             end
-            local right_rect = entity_manager.subtract_rect_compute_right(source_box, box_to_subtract);
-            if entity_manager.subtract_rect_has_no_area(right_rect) == false then
+            local right_rect = entity_manager._subtract_rect_compute_right(source_box, box_to_subtract);
+            if entity_manager._subtract_rect_has_no_area(right_rect) == false then
                 output_boxes[#output_boxes+1] = right_rect
             end
-            local bottom_rect = entity_manager.subtract_rect_compute_bottom(source_box, box_to_subtract);
-            if entity_manager.subtract_rect_has_no_area(bottom_rect) == false then
+            local bottom_rect = entity_manager._subtract_rect_compute_bottom(source_box, box_to_subtract);
+            if entity_manager._subtract_rect_has_no_area(bottom_rect) == false then
                 output_boxes[#output_boxes+1] = bottom_rect
             end
         end
@@ -140,7 +126,7 @@ function entity_manager.subtract_bounding_box_from_boxes(source_boxes, box_to_su
     return output_boxes
 end
 
-function entity_manager.subtract_current_player_ranges(alternative_force, last_bounding_box)
+function entity_manager._subtract_current_player_ranges(alternative_force, last_bounding_box)
     local remaining_bounding_boxes = {}
     remaining_bounding_boxes[1] = last_bounding_box
     for _, player in pairs(game.players) do
@@ -149,8 +135,8 @@ function entity_manager.subtract_current_player_ranges(alternative_force, last_b
                 if player.force == alternative_force then
                     if player.character.logistic_cell ~= nil then
                         local player_construction_radius = player.character.logistic_cell.construction_radius
-                        local player_bounding_box = entity_manager.create_player_bounding_box(player.position, player_construction_radius)
-                        remaining_bounding_boxes = entity_manager.subtract_bounding_box_from_boxes(remaining_bounding_boxes, player_bounding_box)
+                        local player_bounding_box = entity_manager._create_player_bounding_box(player.position, player_construction_radius)
+                        remaining_bounding_boxes = entity_manager._subtract_bounding_box_from_boxes(remaining_bounding_boxes, player_bounding_box)
                     end
                 end
             end
@@ -170,18 +156,18 @@ function entity_manager.find_and_revert_previous_player_range_entities(base_forc
                         force=alternative_force
                     })
                     for _, entity in pairs(entities) do
-                        entity_manager.restore_entity_original_force(entity)
+                        entity_manager._restore_entity_original_force(entity)
                     end
                     player_state.dirty = 0
                 else
-                    local rectangles_to_search = entity_manager.subtract_current_player_ranges(alternative_force, player_state.last_bounding_box)
+                    local rectangles_to_search = entity_manager._subtract_current_player_ranges(alternative_force, player_state.last_bounding_box)
                     for _, rectangle_to_search in pairs(rectangles_to_search) do
                         local entities = surface.find_entities_filtered({
                             area=rectangle_to_search,
                             force=alternative_force
                         })
                         for _, entity in pairs(entities) do
-                            entity_manager.restore_entity_original_force(entity)
+                            entity_manager._restore_entity_original_force(entity)
                         end
                     end
                     player_state.dirty = 1
@@ -196,15 +182,7 @@ function entity_manager.on_player_changed_position(event)
     entity_manager.on_player_changed_position_player(player)
 end
 
-function entity_manager.on_built_entity(event)
-    if global.tc_debug == true then
-        if entity_manager.force_manager._is_force_alternative(event.created_entity.force) then
-            entity_manager.mark_entity(event.created_entity)
-        end
-    end
-end
-
-function entity_manager.create_player_bounding_box(position, construction_radius)
+function entity_manager._create_player_bounding_box(position, construction_radius)
     return {
         left_top={
             x=position.x - construction_radius,
@@ -228,7 +206,7 @@ function entity_manager.on_player_changed_position_player(player)
         if character.logistic_cell ~= nil then
             if global.tc_player_state[player.index].dirty < 2 then
                 local construction_radius = character.logistic_cell.construction_radius
-                local bounding_box = entity_manager.create_player_bounding_box(player.position, construction_radius)
+                local bounding_box = entity_manager._create_player_bounding_box(player.position, construction_radius)
 
                 local entities = player.surface.find_entities_filtered({
                     area=bounding_box,
@@ -236,7 +214,7 @@ function entity_manager.on_player_changed_position_player(player)
                     force=base_force
                 })
                 for _, entity in pairs(entities) do
-                    entity_manager.set_entity_alternative_force(entity)
+                    entity_manager._set_entity_alternative_force(entity)
                 end
 
                 local entities = player.surface.find_entities_filtered({
@@ -245,7 +223,7 @@ function entity_manager.on_player_changed_position_player(player)
                     force=base_force
                 })
                 for _, entity in pairs(entities) do
-                    entity_manager.set_entity_alternative_force(entity)
+                    entity_manager._set_entity_alternative_force(entity)
                 end
 
                 local entities = player.surface.find_entities_filtered({
@@ -254,7 +232,7 @@ function entity_manager.on_player_changed_position_player(player)
                     to_be_upgraded=true,
                 })
                 for _, entity in pairs(entities) do
-                    entity_manager.set_entity_alternative_force(entity)
+                    entity_manager._set_entity_alternative_force(entity)
                 end
 
                 global.tc_player_state[player.index].dirty = 2
@@ -269,7 +247,6 @@ function entity_manager.on_player_left_game(event)
     local player = game.players[event.player_index]
     local base_force = entity_manager.force_manager.fetch_base_force(player.force)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
-    -- entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
     entity_manager.find_and_revert_all_entities(base_force, alternative_force)
 end
 
@@ -279,38 +256,34 @@ function entity_manager.on_toggle(player, new_state)
     else
         local base_force = entity_manager.force_manager.fetch_base_force(player.force)
         local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
-        -- entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, false)
         entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     end
 end
 
-function entity_manager.restore_entity_original_force(entity)
-	local base_force_name, is_force_alternative = entity_manager.force_manager._parse_force_name(entity.force.name)
-    if is_force_alternative == true then
+function entity_manager._restore_entity_original_force(entity)
+    local base_force = entity_manager.force_manager.fetch_base_force(entity.force)
+    if base_force.name ~= entity.force.name then
         if global.tc_debug == true then
-            entity_manager.unmark_entity(entity)
+            entity_manager._debug_unmark_entity(entity)
         end
-        local base_force = game.forces[base_force_name]
-        if base_force ~= nil then
-            local re_deconstruct = entity.to_be_deconstructed()
-            local re_upgrade = entity.to_be_upgraded()
-            entity.force = base_force
-            if re_deconstruct == true then
-                entity.order_deconstruction(base_force, nil)
-            end
-            if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
-                entity.order_upgrade({
-                    force=base_force,
-                    target=entity.prototype.next_upgrade
-                })
-            end
+        local re_deconstruct = entity.to_be_deconstructed()
+        local re_upgrade = entity.to_be_upgraded()
+        entity.force = base_force
+        if re_deconstruct == true then
+            entity.order_deconstruction(base_force, nil)
+        end
+        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
+            entity.order_upgrade({
+                force=base_force,
+                target=entity.prototype.next_upgrade
+            })
         end
     end
 end
 
-function entity_manager.set_entity_alternative_force(entity)
+function entity_manager._set_entity_alternative_force(entity)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(entity.force)
-    if alternative_force ~= nil then
+    if alternative_force.name ~= entity.force.name then
         local re_deconstruct = entity.to_be_deconstructed()
         local re_upgrade = entity.to_be_upgraded()
         entity.force = alternative_force
@@ -324,7 +297,18 @@ function entity_manager.set_entity_alternative_force(entity)
             })
         end
         if global.tc_debug == true then
-            entity_manager.mark_entity(entity)
+            entity_manager._debug_mark_entity(entity)
+        end
+    end
+end
+
+function entity_manager.garbage_collect()
+    if global.tc_debug == true then
+        -- search for and delete any dangling references
+        for render_key, render_id in pairs(global.tc_renders) do
+            if rendering.is_valid(render_id) == false then
+                global.tc_renders[render_key] = nil
+            end
         end
     end
 end
@@ -332,8 +316,6 @@ end
 function entity_manager.register_events()
     script.on_event(defines.events.on_player_changed_position, entity_manager.on_player_changed_position)
     script.on_event(defines.events.on_player_left_game, entity_manager.on_player_left_game)
-    script.on_event(defines.events.on_built_entity, entity_manager.on_built_entity)
-    script.on_event(defines.events.on_robot_built_entity, entity_manager.on_built_entity)
 end
 
 function entity_manager.init(force_manager)

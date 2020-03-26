@@ -67,10 +67,16 @@ local function on_toggle(player)
     end
 end
 
+local function garbage_collect(event)
+    entity_manager.garbage_collect()
+    force_manager.garbage_collect()
+end
+
 script.on_init(on_mod_init)
 script.on_event(defines.events.on_player_joined_game, on_player_joined)
 script.on_event(defines.events.on_player_left_game, on_player_left)
 script.on_event(defines.events.on_research_finished, on_research_finished)
+script.on_nth_tick(7200, garbage_collect)
 entity_manager.init(force_manager)
 entity_manager.register_events()
 gui.register_events(on_toggle)
