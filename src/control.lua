@@ -22,7 +22,9 @@ local function init_player(player)
         }
     end
     gui.build_for_player(player)
-    force_manager.notify_init_player(player)
+
+    -- this call creates the alternative force for this player if it doesn't already exist
+    force_manager.fetch_alternative_force(player.force)
 end
 
 local function deinit_player(player)

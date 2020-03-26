@@ -198,7 +198,7 @@ end
 
 function entity_manager.on_built_entity(event)
     if global.tc_debug == true then
-        if entity_manager.force_manager.is_force_alternative(event.created_entity.force) then
+        if entity_manager.force_manager._is_force_alternative(event.created_entity.force) then
             entity_manager.mark_entity(event.created_entity)
         end
     end
@@ -285,7 +285,7 @@ function entity_manager.on_toggle(player, new_state)
 end
 
 function entity_manager.restore_entity_original_force(entity)
-	local base_force_name, is_force_alternative = entity_manager.force_manager.parse_force_name(entity.force.name)
+	local base_force_name, is_force_alternative = entity_manager.force_manager._parse_force_name(entity.force.name)
     if is_force_alternative == true then
         if global.tc_debug == true then
             entity_manager.unmark_entity(entity)
