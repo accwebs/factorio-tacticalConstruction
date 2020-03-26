@@ -22,25 +22,6 @@ function entity_manager._debug_unmark_entity(entity)
     end
 end
 
-function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
-    for _, surface in pairs(game.surfaces) do
-        local entities = surface.find_entities_filtered({
-            force=alternative_force
-        })
-        for _, entity in pairs(entities) do
-            entity_manager._restore_entity_original_force(entity)
-        end
-    end
-    for player_index, player_state in pairs(global.tc_player_state) do
-        if game.players[player_index] then
-            local player_force = game.players[player_index].force
-            if player_force.name == base_force.name or player_force.name == alternative_force.name then
-                player_state.dirty = 0
-            end
-        end
-    end
-end
-
 function entity_manager._subtract_rect_compute_top(rect, subtracted)
     return {
         left_top={
@@ -150,6 +131,80 @@ function entity_manager._subtract_current_player_ranges(alternative_force, last_
     return remaining_bounding_boxes
 end
 
+function entity_manager._create_player_bounding_box(position, construction_radius)
+    return {
+        left_top={
+            x=position.x - construction_radius,
+            y=position.y - construction_radius
+        },
+        right_bottom={
+            x=position.x + construction_radius,
+            y=position.y + construction_radius
+        }
+    }
+end
+
+function entity_manager._restore_entity_original_force(entity)
+    local base_force = entity_manager.force_manager.fetch_base_force(entity.force)
+    if base_force.name ~= entity.force.name then
+        if global.tc_debug == true then
+            entity_manager._debug_unmark_entity(entity)
+        end
+        local re_deconstruct = entity.to_be_deconstructed()
+        local re_upgrade = entity.to_be_upgraded()
+        entity.force = base_force
+        if re_deconstruct == true then
+            entity.order_deconstruction(base_force, nil)
+        end
+        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
+            entity.order_upgrade({
+                force=base_force,
+                target=entity.prototype.next_upgrade
+            })
+        end
+    end
+end
+
+function entity_manager._set_entity_alternative_force(entity)
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(entity.force)
+    if alternative_force.name ~= entity.force.name then
+        local re_deconstruct = entity.to_be_deconstructed()
+        local re_upgrade = entity.to_be_upgraded()
+        entity.force = alternative_force
+        if re_deconstruct == true then
+            entity.order_deconstruction(alternative_force, nil)
+        end
+        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
+            entity.order_upgrade({
+                force=alternative_force,
+                target=entity.prototype.next_upgrade
+            })
+        end
+        if global.tc_debug == true then
+            entity_manager._debug_mark_entity(entity)
+        end
+    end
+end
+
+function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+    for _, surface in pairs(game.surfaces) do
+        local entities = surface.find_entities_filtered({
+            force=alternative_force
+        })
+        for _, entity in pairs(entities) do
+            entity_manager._restore_entity_original_force(entity)
+        end
+    end
+    for player_index, player_state in pairs(global.tc_player_state) do
+        if game.players[player_index] then
+            local player_force = game.players[player_index].force
+            if player_force.name == base_force.name or player_force.name == alternative_force.name then
+                player_state.dirty = 0
+            end
+        end
+    end
+end
+
 function entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, skip_still_in_range)
     for player_index, player_state in pairs(global.tc_player_state) do
         if player_state.dirty > 0 then
@@ -185,19 +240,6 @@ end
 function entity_manager.on_player_changed_position(event)
     local player = game.players[event.player_index]
     entity_manager.on_player_changed_position_player(player)
-end
-
-function entity_manager._create_player_bounding_box(position, construction_radius)
-    return {
-        left_top={
-            x=position.x - construction_radius,
-            y=position.y - construction_radius
-        },
-        right_bottom={
-            x=position.x + construction_radius,
-            y=position.y + construction_radius
-        }
-    }
 end
 
 function entity_manager.on_player_changed_position_player(player)
@@ -262,48 +304,6 @@ function entity_manager.on_toggle(player, new_state)
         local base_force = entity_manager.force_manager.fetch_base_force(player.force)
         local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
         entity_manager.find_and_revert_all_entities(base_force, alternative_force)
-    end
-end
-
-function entity_manager._restore_entity_original_force(entity)
-    local base_force = entity_manager.force_manager.fetch_base_force(entity.force)
-    if base_force.name ~= entity.force.name then
-        if global.tc_debug == true then
-            entity_manager._debug_unmark_entity(entity)
-        end
-        local re_deconstruct = entity.to_be_deconstructed()
-        local re_upgrade = entity.to_be_upgraded()
-        entity.force = base_force
-        if re_deconstruct == true then
-            entity.order_deconstruction(base_force, nil)
-        end
-        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
-            entity.order_upgrade({
-                force=base_force,
-                target=entity.prototype.next_upgrade
-            })
-        end
-    end
-end
-
-function entity_manager._set_entity_alternative_force(entity)
-    local alternative_force = entity_manager.force_manager.fetch_alternative_force(entity.force)
-    if alternative_force.name ~= entity.force.name then
-        local re_deconstruct = entity.to_be_deconstructed()
-        local re_upgrade = entity.to_be_upgraded()
-        entity.force = alternative_force
-        if re_deconstruct == true then
-            entity.order_deconstruction(alternative_force, nil)
-        end
-        if re_upgrade == true and entity.prototype.next_upgrade ~= nil then
-            entity.order_upgrade({
-                force=alternative_force,
-                target=entity.prototype.next_upgrade
-            })
-        end
-        if global.tc_debug == true then
-            entity_manager._debug_mark_entity(entity)
-        end
     end
 end
 
