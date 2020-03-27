@@ -20,13 +20,29 @@ local function init_player(player)
     force_manager.fetch_alternative_force(player.force)
 end
 
+local function revert_what_we_can(base_force, alternative_force)
+    local safe_to_revert_all_entities = true
+    for _, player in pairs(game.players) do
+        if player.connected ~= true then
+            if player.force.name == alternative_force.name then
+                safe_to_revert_all_entities = false
+            end
+        end
+    end
+    if safe_to_revert_all_entities then
+        entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+    else
+        entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, true)
+    end
+end
+
 local function reset_player(player)
     if global.tc_player_state[player.index] ~= nil then
         global.tc_player_state[player.index].toggled = false
     end
     local base_force = force_manager.fetch_base_force(player.force)
     local alternative_force = force_manager.fetch_alternative_force(player.force)
-    entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+    revert_what_we_can(base_force, alternative_force)
 end
 
 local function reset_stale_players()
@@ -78,7 +94,7 @@ local function on_player_changed_force(event)
     local old_alternative_force = force_manager.fetch_alternative_force(old_force)
 
     if new_base_force.name ~= old_base_force.name or new_alternative_force.name ~= old_alternative_force.name then
-        entity_manager.find_and_revert_all_entities(old_base_force, old_alternative_force)
+        revert_what_we_can(old_base_force, old_alternative_force)
         reset_player(player)
     end
 end
@@ -93,7 +109,7 @@ local function on_toggle(player)
     else
         force_manager.restore_player_original_force(player)
         global.tc_player_state[player.index].toggled = false
-        entity_manager.find_and_revert_all_entities(base_force, alternative_force)
+        revert_what_we_can(base_force, alternative_force)
     end
 end
 
