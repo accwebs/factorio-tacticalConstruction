@@ -237,17 +237,8 @@ function entity_manager.find_and_revert_previous_player_range_entities(base_forc
     end
 end
 
-function entity_manager.on_player_changed_position(event)
-    local player = game.players[event.player_index]
-    entity_manager.on_player_changed_position_player(player)
-end
-
-function entity_manager.on_player_changed_position_player(player)
-    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
-    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
+function entity_manager.find_and_convert_player_range_construction_entities(player, base_force, alternative_force)
     local character = player.character
-
-    entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, true)
 
     if player.force == alternative_force then
         if character.logistic_cell ~= nil then
@@ -290,23 +281,6 @@ function entity_manager.on_player_changed_position_player(player)
     end
 end
 
-function entity_manager.on_player_left_game(event)
-    local player = game.players[event.player_index]
-    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
-    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
-    entity_manager.find_and_revert_all_entities(base_force, alternative_force)
-end
-
-function entity_manager.on_toggle(player, new_state)
-    if new_state == true then
-        entity_manager.on_player_changed_position_player(player)
-    else
-        local base_force = entity_manager.force_manager.fetch_base_force(player.force)
-        local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
-        entity_manager.find_and_revert_all_entities(base_force, alternative_force)
-    end
-end
-
 function entity_manager.garbage_collect()
     if global.tc_debug == true then
         -- search for and delete any dangling references
@@ -316,11 +290,6 @@ function entity_manager.garbage_collect()
             end
         end
     end
-end
-
-function entity_manager.register_events()
-    script.on_event(defines.events.on_player_changed_position, entity_manager.on_player_changed_position)
-    script.on_event(defines.events.on_player_left_game, entity_manager.on_player_left_game)
 end
 
 function entity_manager.init(force_manager)

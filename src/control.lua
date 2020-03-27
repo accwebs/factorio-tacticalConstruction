@@ -24,6 +24,9 @@ local function deinit_player(player)
     if global.tc_player_state[player.index] ~= nil then
         global.tc_player_state[player.index].toggled = false
     end
+    local base_force = force_manager.fetch_base_force(player.force)
+    local alternative_force = force_manager.fetch_alternative_force(player.force)
+    entity_manager.find_and_revert_all_entities(base_force, alternative_force)
 end
 
 local function purge_stale_players()
@@ -48,19 +51,33 @@ local function on_player_joined(event)
     init_player(game.players[event.player_index])
 end
 
+local function on_player_left(event)
+    deinit_player(game.players[event.player_index])
+end
+
 local function on_research_finished(event)
     force_manager.notify_research_finished(event)
 end
 
+local function on_player_changed_position(event)
+    local player = game.players[event.player_index]
+    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
+    entity_manager.find_and_revert_previous_player_range_entities(base_force, alternative_force, true)
+    entity_manager.find_and_convert_player_range_construction_entities(player, base_force, alternative_force)
+end
+
 local function on_toggle(player)
+    local base_force = entity_manager.force_manager.fetch_base_force(player.force)
+    local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
     if not global.tc_player_state[player.index].toggled then
         force_manager.switch_player_to_alternative_force(player)
         global.tc_player_state[player.index].toggled = true
-        entity_manager.on_toggle(player, true)
+        entity_manager.find_and_convert_player_range_construction_entities(player, base_force, alternative_force)
     else
         force_manager.restore_player_original_force(player)
         global.tc_player_state[player.index].toggled = false
-        entity_manager.on_toggle(player, false)
+        entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     end
 end
 
@@ -72,8 +89,9 @@ end
 
 script.on_init(on_mod_init)
 script.on_event(defines.events.on_player_joined_game, on_player_joined)
+script.on_event(defines.events.on_player_left_game, on_player_left)
 script.on_event(defines.events.on_research_finished, on_research_finished)
+script.on_event(defines.events.on_player_changed_position, on_player_changed_position)
 script.on_nth_tick(7200, garbage_collect)
 entity_manager.init(force_manager)
-entity_manager.register_events()
 gui.register_events(on_toggle)
