@@ -12,7 +12,13 @@ end
 
 function gui.build_for_player(player)
     local parent = mod_gui.get_frame_flow(player)
-    if not parent.tacticalConstructionToggleButton then
+    local exists = false
+    for _, child in pairs(parent.children) do
+        if child.name == "tacticalConstructionToggleButton" then
+            exists = true
+        end
+    end
+    if exists == false then
         parent.add({
             type = "sprite-button",
             name = "tacticalConstructionToggleButton",
