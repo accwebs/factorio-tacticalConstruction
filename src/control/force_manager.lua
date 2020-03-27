@@ -242,8 +242,13 @@ function force_manager.garbage_collect()
                     delete_force = false
                 end
             end
+            local base_force = game.forces[base_force_name]
+            for _, this_player in pairs(base_force.players) do
+                if this_player.connected == true then
+                    delete_force = false
+                end
+            end
             if delete_force == true then
-                local base_force = game.forces[base_force_name]
                 local alternative_force = game.forces[alternative_force_name]
                 game.merge_forces(alternative_force, base_force)
             end
