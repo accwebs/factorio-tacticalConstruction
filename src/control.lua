@@ -128,6 +128,6 @@ script.on_event(defines.events.on_player_left_game, on_player_left)
 script.on_event(defines.events.on_research_finished, on_research_finished)
 script.on_event(defines.events.on_player_changed_position, on_player_changed_position)
 script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
-script.on_nth_tick(7200, garbage_collect)
+script.on_nth_tick(7200, garbage_collect) -- every 2 minutes-ish
 entity_manager.init(force_manager)
 gui.register_events(on_toggle)
