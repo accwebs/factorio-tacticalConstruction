@@ -38,11 +38,13 @@ end
 
 local function reset_player(player)
     if global.tc_player_state[player.index] ~= nil then
-        global.tc_player_state[player.index].toggled = false
+        if global.tc_player_state[player.index].toggled then
+            global.tc_player_state[player.index].toggled = false
+            local base_force = force_manager.fetch_base_force(player.force)
+            local alternative_force = force_manager.fetch_alternative_force(player.force)
+            revert_what_we_can(base_force, alternative_force)
+        end
     end
-    local base_force = force_manager.fetch_base_force(player.force)
-    local alternative_force = force_manager.fetch_alternative_force(player.force)
-    revert_what_we_can(base_force, alternative_force)
 end
 
 local function reset_stale_players()
