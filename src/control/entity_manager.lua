@@ -1,5 +1,7 @@
 local entity_manager = {}
 
+entity_manager.ENTITY_TYPE_EXCLUSIONS = {"combat-robot", "construction-robot", "logistic-robot", "character"}
+
 function entity_manager._debug_mark_entity(entity)
     if entity.unit_number ~= nil then
         local render_id = rendering.draw_circle({
@@ -186,13 +188,24 @@ function entity_manager._set_entity_alternative_force(entity)
     end
 end
 
+function entity_manager._is_excluded_entity_type(entity)
+    for _, exclusion in pairs(entity_manager.ENTITY_TYPE_EXCLUSIONS) do
+        if entity.type == exclusion then
+            return true
+        end
+    end
+    return false
+end
+
 function entity_manager.find_and_revert_all_entities(base_force, alternative_force)
     for _, surface in pairs(game.surfaces) do
         local entities = surface.find_entities_filtered({
             force=alternative_force
         })
         for _, entity in pairs(entities) do
-            entity_manager._restore_entity_original_force(entity)
+            if entity_manager._is_excluded_entity_type(entity) == false then
+                entity_manager._restore_entity_original_force(entity)
+            end
         end
     end
     for player_index, player_state in pairs(global.tc_player_state) do
@@ -216,7 +229,9 @@ function entity_manager.find_and_revert_previous_player_range_entities(base_forc
                         force=alternative_force
                     })
                     for _, entity in pairs(entities) do
-                        entity_manager._restore_entity_original_force(entity)
+                        if entity_manager._is_excluded_entity_type(entity) == false then
+                            entity_manager._restore_entity_original_force(entity)
+                        end
                     end
                     player_state.dirty = 0
                 else
@@ -227,7 +242,9 @@ function entity_manager.find_and_revert_previous_player_range_entities(base_forc
                             force=alternative_force
                         })
                         for _, entity in pairs(entities) do
-                            entity_manager._restore_entity_original_force(entity)
+                            if entity_manager._is_excluded_entity_type(entity) == false then
+                                entity_manager._restore_entity_original_force(entity)
+                            end
                         end
                     end
                     player_state.dirty = 1
