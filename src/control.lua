@@ -23,7 +23,7 @@ end
 local function revert_what_we_can(base_force, alternative_force)
     local safe_to_revert_all_entities = true
     for _, player in pairs(game.players) do
-        if player.connected ~= true then
+        if player.connected then
             if player.force.name == alternative_force.name then
                 safe_to_revert_all_entities = false
             end
