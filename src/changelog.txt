@@ -1,8 +1,21 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
-Date: 2020-XX-XX
+Date: 2020-03-27
+  Changes:
+    - Major refactor of roles and responsibilities between different script files.
+    - Refactor event handling/response logic to make the different interactions more understandable.
+    - Redesign alternative force creation logic to ensure crash doesn't happen if a player has changed forces since joining the game.
+    - Register and listen to events.on_player_changed_force and try to react if player has moved forces outside of this mod.
+    - Implement much more reliable 'garbage collection' logic:
+      - Runs every ~2 min. I've rather painstakenly tried to optimize this, but please report if you notice consistent lag every 2 mins.
+      - Clean up the alternative forces if there are no longer any connected players that might use them.
+      - Reset any disconnected player's 'toggle' state and associated gui.
+  Gui:
+    - Give the 'enabled' version of the feature's toggle button a yellow background to make it more intuitive that it's 'enabled'.
   Bugfixes:
-    - TODO
+    - Fix script error immediately encountered in 'true' single player game (issue #4).
+    - Fix players 'bleeding' robots because the script tries to restore anything outside the construction radius back to the original force (robots and player characters now excluded :-) ).
+    - Don't revert all entities from alternative_force -> base_force if another player is currently living on the alternative force.
 ---------------------------------------------------------------------------------------------------
 Version: 0.0.4
 Date: 2020-03-22
