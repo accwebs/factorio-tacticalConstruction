@@ -16,8 +16,8 @@ function gui.build_for_player(player)
         parent.add({
             type = "sprite-button",
             name = "tacticalConstructionToggleButton",
-            style = "tactical-construction-sprite-style",
-            sprite = "tactical-construction-button-disabled"}
+            style = "tactical-construction-button-style-disabled",
+            sprite = "tactical-construction-sprite-disabled"}
         )
     end
 end
@@ -29,9 +29,11 @@ function gui.update_all()
             gui.build_for_player(player)
             local parent = mod_gui.get_frame_flow(player)
             if not global.tc_player_state[player.index].toggled then
-                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-disabled"
+                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-disabled"
+                parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-disabled"
             else
-                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-button-enabled"
+                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-enabled"
+                parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-enabled"
             end
         end
     end
