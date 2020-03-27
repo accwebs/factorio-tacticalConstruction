@@ -40,6 +40,7 @@ local function reset_player(player)
     if global.tc_player_state[player.index] ~= nil then
         if global.tc_player_state[player.index].toggled then
             global.tc_player_state[player.index].toggled = false
+            gui.update_all()
             local base_force = force_manager.fetch_base_force(player.force)
             local alternative_force = force_manager.fetch_alternative_force(player.force)
             revert_what_we_can(base_force, alternative_force)
