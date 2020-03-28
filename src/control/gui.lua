@@ -34,12 +34,14 @@ function gui.update_all()
         if player.connected == true then
             gui.build_for_player(player)
             local parent = mod_gui.get_frame_flow(player)
-            if not global.tc_player_state[player.index].toggled then
-                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-disabled"
-                parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-disabled"
-            else
-                parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-enabled"
-                parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-enabled"
+            if global.tc_player_state[player.index] then
+                if not global.tc_player_state[player.index].toggled then
+                    parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-disabled"
+                    parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-disabled"
+                else
+                    parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-enabled"
+                    parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-enabled"
+                end
             end
         end
     end
