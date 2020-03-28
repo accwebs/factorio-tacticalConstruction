@@ -14,7 +14,7 @@ local function init_player(player)
             last_bounding_box = {{-1, -1}, {-1, -1}}
         }
     end
-    gui.build_for_player(player)
+    gui.update_all()
 
     -- this call creates the alternative force for this player if it doesn't already exist
     force_manager.fetch_alternative_force(player.force)
@@ -40,6 +40,7 @@ local function reset_player(player)
     if global.tc_player_state[player.index] ~= nil then
         if global.tc_player_state[player.index].toggled then
             global.tc_player_state[player.index].toggled = false
+            force_manager.restore_player_original_force(player)
             gui.update_all()
             local base_force = force_manager.fetch_base_force(player.force)
             local alternative_force = force_manager.fetch_alternative_force(player.force)
