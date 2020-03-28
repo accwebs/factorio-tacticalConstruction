@@ -1,8 +1,11 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.1
-Date: 2020-XX-XX
+Date: 2020-03-27
   Bugfixes:
-    - TODO
+    - Fix player resetting logic to move the player back to their primary force upon reset.
+    - Fix player initialization logic to call update_gui() to update the full gui state (rather than just creating the gui if necessary, but not refreshing it).
+  Changes:
+    - Add (rather janky) thumbnail image.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.0
 Date: 2020-03-27
