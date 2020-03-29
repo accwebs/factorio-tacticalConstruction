@@ -1,4 +1,15 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.1.3
+Date: 2020-03-28
+  Info:
+    - No real functional changes with this version; simply revising the mod description to indicate the mod is what I would call in 'beta' stage.
+      - I and my friends did some pretty extensive testing in various multiplayer games.
+      - Even on our 'huge base' file, the 'alternative force' management logic in the mod has not screwed up anything in our base.
+      - Even if something does get glitched out and gets 'stuck' on the 'alternative force' as long as everyone has toggled off the button, the mod does now have logic (as of v0.1.0) to ensure anything 'stuck' on the alternative force is reverted.
+  Changes:
+    - Update mod description (info.json and readme).
+    - Add usage instructions to readme.
+---------------------------------------------------------------------------------------------------
 Version: 0.1.2
 Date: 2020-03-28
   Bugfixes:
