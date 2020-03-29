@@ -25,6 +25,12 @@ Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/
    - As you move, now-out-of-range entities are sent back to your base's primary force. And new in-range entities needing construction are moved to the alternative force.
 5. Once the construction is complete, toggle off the button. You will be sent back to your primary force and any as-yet alternate-force entities will be reverted along with you.
 
+## Considerations
+
+1. This mod auto-creates one alternative (allied) force per each player force. In most games there is one player force (thus, only one alternative force will be created); however, this mod tries to handle scenarios where there are multiple player forces (each getting its own alternate force).
+2. Due to the alternate force behavior, once you save your game with this mod active, it's probably not advisable to disable the mod on that save file moving forward.  Tactical Construction makes a point to clean up any alternative forces when there are no longer any connected players that might use them; however, if you disable the mod, that logic will of course not be able to run to clean up any alternative forces that were still determined to be needed at the point of save.
+   - I **may** eventually add a console command that can be used to tell the mod to clean itself up and go into a permanent 'zombie' state. This could be run right before saving the game, after which the mod could be disabled. File a Github issue if something like this would be of use to you.
+
 ## Limitations
 
 1. Deconstruction: Does not work with to-be-deconstructed entities. At present there's no efficient way to find entities marked for deconstruction. Enhancement request has been submitted here: https://forums.factorio.com/viewtopic.php?t=82643
