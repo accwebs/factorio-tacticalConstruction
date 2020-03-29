@@ -4,11 +4,26 @@ Source repository for the Factorio mod Tactical Construction.
 
 ## Description
 
-Tactical Construction is an experimental mod for the video game [Factorio](https://factorio.com/). It attempts to allow the player to prioritize their local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport).
+Tactical Construction is a mod for the video game [Factorio](https://factorio.com/). It provides a per-player toggle that - when enabled - prioritize's the local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport).
 
 Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/TacticalConstruction
 
-**WARNING: This mod is currently very much in "Alpha". I'm doing all sorts of evil things to make this work. You are likely to encounter bugs, crashes - or worse - you may discover your entities have randomly 'jumped' to an alternative force in the game with no clear route to get 'home' to your primary force. In the latter scenario, your save file will not recover even should you disable the mod entirely after-the-fact. So, please, until I have tested this out better, do be VERY careful on which save files you use this mod on!**
+**CAUTION: This mod is still in BETA; you may encounter crashes/corruption.**
+
+## Usage Instructions
+
+1. Look for the Tactical Construction toggle button (currently in the upper-left corner of the screen):
+   - When disabled, looks like this:
+   ![Tactical Construction toggle button - disabled](src/graphics/toggle-icon-disabled.png)
+   - When enabled, looks like this:
+   ![Tactical Construction toggle button - enabled](src/graphics/toggle-icon-enabled.png)
+2. Have a personal roboport in your player's armor, construction robots and supplies for building in inventory, etc. Just like normal.
+3. Keep the Tactical Construction button toggled off under regular play.
+4. Upon encountering an issue where your base's robot network is scheduled to build something that you want to build w your player, toggle the button on.
+   - When enabled, your player and any entities needing construction around you will be transported to an 'alternative' force in the game that is auto-created and - to the maximum extent possible - synced with your regular force.
+   - However, even allied forces don't fulfill eachother's construction requests. This means your player's robots will handle the construction despite your base's network overlapping.
+   - As you move, now-out-of-range entities are sent back to your base's primary force. And new in-range entities needing construction are moved to the alternative force.
+   - Once the construction is complete, toggle off the button. You will be sent back to your primary force and any as-yet alternate-force entities will be reverted along with you.
 
 ## Limitations
 
