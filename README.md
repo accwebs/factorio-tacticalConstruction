@@ -4,7 +4,7 @@ Source repository for the Factorio mod Tactical Construction.
 
 ## Description
 
-Tactical Construction is a mod for the video game [Factorio](https://factorio.com/). It provides a per-player toggle that - when enabled - prioritize's the local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport).
+Tactical Construction is a mod for the video game [Factorio](https://factorio.com/). It provides a per-player toggle that - when enabled - prioritizes the local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport).
 
 Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/TacticalConstruction
 
