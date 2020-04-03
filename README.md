@@ -2,13 +2,23 @@
 
 Source repository for the Factorio mod Tactical Construction.
 
-## Description
+## Summary
 
 Tactical Construction is a mod for the video game [Factorio](https://factorio.com/). It provides a per-player toggle that - when enabled - prioritizes the local player's roboport for construction requests (as opposed to allowing construction requests to be satisfied by any statically-placed logistics network that overlaps inside the player's mobile roboport).
 
 Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/TacticalConstruction
 
 **CAUTION: This mod is still in BETA; you may encounter crashes/corruption.**
+
+## How this Came to Be
+
+My Factorio friends and I love construction robots. After all, who doesn't?
+
+The great news is that the game seems to be pretty good at figuring out the different logistics networks and such and allocating jobs out to available robots. The bad news is that when building out your base, a constant annoyance to me and my friends is that once a construction job is 'assigned out' to the base network, even if the assigned robot is light-years away, the job won't get re-assigned to your local player. I get that that's probably a case of "it's not a bug, it's a feature", and I think I agree. However, the practical aspect of things is sometimes you just want your player's robots to finish the damn template next to you right away so you can get on with your life and build something else.
+
+Rather than complain about it (okay, that's a lie, I complained about it incessantly), I decided to see if I could do something about it. So, after doing some investigation that *cough* might have involved a little bit of disassembling the native executable using the included PDB file for symbols (what can I say, I'm obsessive at times) I finally realized how the game's robot scheduling algorithm worked. Reviewing the various nested loops and calls, suddenly clicked to me that if I was to create a separate force in the game, the construction requests would be scheduled separately.
+
+Hence this horrible idea of a mod was formed. When you toggle the button on, your player and any entities needing construction within your player's roboport, get moved to an alternate force. This has the effect of prioritizing your local roboport at the expense of causing various negative side effects. (So far they all seem to be temporary, although not sure.)
 
 ## Usage Instructions
 
