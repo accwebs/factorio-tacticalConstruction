@@ -72,14 +72,23 @@ local function on_player_joined(event)
 end
 
 local function on_player_left(event)
+    if not global.tc_player_state or not global.tc_player_state[event.player_index] then
+        return
+    end
     reset_player(game.players[event.player_index])
 end
 
 local function on_research_finished(event)
+    if not global.tc_player_state then
+        return
+    end
     force_manager.notify_research_finished(event)
 end
 
 local function on_player_changed_position(event)
+    if not global.tc_player_state or not global.tc_player_state[event.player_index] then
+        return
+    end
     local player = game.players[event.player_index]
     local base_force = entity_manager.force_manager.fetch_base_force(player.force)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
@@ -88,6 +97,9 @@ local function on_player_changed_position(event)
 end
 
 local function on_player_changed_force(event)
+    if not global.tc_player_state or not global.tc_player_state[event.player_index] then
+        return
+    end
     local player = game.players[event.player_index]
     local new_force = player.force
     local old_force = event.force
@@ -104,6 +116,9 @@ local function on_player_changed_force(event)
 end
 
 local function on_toggle(player)
+    if not global.tc_player_state or not global.tc_player_state[player.index] then
+        return
+    end
     local base_force = entity_manager.force_manager.fetch_base_force(player.force)
     local alternative_force = entity_manager.force_manager.fetch_alternative_force(player.force)
     if not global.tc_player_state[player.index].toggled then

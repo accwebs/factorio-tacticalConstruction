@@ -1,8 +1,8 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2020-XX-XX
-  Info:
-    - TODO
+  Bugfixes:
+    - Fix crash when a scenario or other mod script is altering the player force upon map creation (before mod init).
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.3
 Date: 2020-03-28
