@@ -22,11 +22,11 @@ Hence this horrible idea of a mod was formed. When you toggle the button on, you
 
 ## Usage Instructions
 
-1. Look for the Tactical Construction toggle button (currently in the upper-left corner of the screen):
-   - When disabled, looks like this:
-   ![Tactical Construction toggle button - disabled](src/graphics/toggle-icon-disabled.png)
-   - When enabled, looks like this:
-   ![Tactical Construction toggle button - enabled](src/graphics/toggle-icon-enabled.png)
+1. Un-hide the Tactical Construction toggle button on your shortcut bar:
+   - On the top right of your shortcut bar, there is a small "..." button that lets you customize the bar. Click it to show the customization menu.
+   ![How to enable shortcut button 1](HowToEnableShortcutButton1.png)
+   - Enable display of the custom shortcut button by clicking the checkbox next to it. If the checkbox will not enable, you may need to first uncheck something else to make room.
+   ![How to enable shortcut button 2](HowToEnableShortcutButton2.png)
 2. Have a personal roboport in your player's armor, construction robots and supplies for building in inventory, etc. Just like normal.
 3. Keep the Tactical Construction button toggled off under regular play.
 4. Upon encountering an issue where your base's robot network is scheduled to build something that you want to build w your player, toggle the button on:
