@@ -258,7 +258,7 @@ function entity_manager.find_and_convert_player_range_construction_entities(play
     local character = player.character
 
     if player.force == alternative_force then
-        if character.logistic_cell ~= nil then
+        if character ~= nil and character.logistic_cell ~= nil then
             if global.tc_player_state[player.index].dirty < 2 then
                 local construction_radius = character.logistic_cell.construction_radius
                 local bounding_box = entity_manager._create_player_bounding_box(player.position, construction_radius)

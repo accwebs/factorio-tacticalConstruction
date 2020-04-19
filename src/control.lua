@@ -116,7 +116,7 @@ local function on_player_changed_force(event)
 end
 
 local function on_toggle(player)
-    if not global.tc_player_state or not global.tc_player_state[player.index] then
+    if not global.tc_player_state or not global.tc_player_state[player.index] or not player.character then
         return
     end
     local base_force = entity_manager.force_manager.fetch_base_force(player.force)
@@ -144,6 +144,7 @@ script.on_event(defines.events.on_player_left_game, on_player_left)
 script.on_event(defines.events.on_research_finished, on_research_finished)
 script.on_event(defines.events.on_player_changed_position, on_player_changed_position)
 script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
+script.on_event(defines.events.on_pre_player_died, on_player_left)
 script.on_nth_tick(7200, garbage_collect) -- every 2 minutes-ish
 entity_manager.init(force_manager)
 gui.register_events(on_toggle)
