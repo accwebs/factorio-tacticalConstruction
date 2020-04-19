@@ -1,8 +1,15 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
-Date: 2020-XX-XX
-  Info:
-    - TODO
+Date: 2020-04-18
+  Changes:
+    - Rework toggle button to be on shortcut bar.
+      - Note: You will have to unhide it using small '...' button on right side of shortcut area.
+    - Add keyboard shortcut support.
+      - Default is ALT-F.
+      - Configurable via Settings -> Controls.
+  Bugfixes:
+    - Prevent crash when toggling the feature on/off when player is dead.
+    - Upon death, player reverts to primary/default force.
 ---------------------------------------------------------------------------------------------------
 Version: 0.1.4
 Date: 2020-04-18
