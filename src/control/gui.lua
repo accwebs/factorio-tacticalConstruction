@@ -1,55 +1,36 @@
-require("mod-gui")
-
 local gui = {}
 
-function gui.on_click(event)
-    if event.element.name == "tacticalConstructionToggleButton" then
+gui.TOGGLE_BUTTON_PROTOTYPE_NAME = "toggle-personal-roboport-priority"
+
+function gui.on_lua_shortcut(event)
+    if event.prototype_name == gui.TOGGLE_BUTTON_PROTOTYPE_NAME then
         local player = game.players[event.player_index]
-        gui.click_callback(player)
+        gui.toggle_callback(player)
         gui.update_all()
     end
 end
 
-function gui.build_for_player(player)
-    local parent = mod_gui.get_frame_flow(player)
-    local exists = false
-    for _, child in pairs(parent.children) do
-        if child.name == "tacticalConstructionToggleButton" then
-            exists = true
-        end
-    end
-    if exists == false then
-        parent.add({
-            type = "sprite-button",
-            name = "tacticalConstructionToggleButton",
-            style = "tactical-construction-button-style-disabled",
-            sprite = "tactical-construction-sprite-disabled"}
-        )
-    end
+function gui.on_hot_key(event)
+    local player = game.players[event.player_index]
+    gui.toggle_callback(player)
+    gui.update_all()
 end
 
 function gui.update_all()
     for i,_ in pairs(game.players) do
         local player = game.players[i]
         if player.connected == true then
-            gui.build_for_player(player)
-            local parent = mod_gui.get_frame_flow(player)
             if global.tc_player_state[player.index] then
-                if not global.tc_player_state[player.index].toggled then
-                    parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-disabled"
-                    parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-disabled"
-                else
-                    parent.tacticalConstructionToggleButton.sprite = "tactical-construction-sprite-enabled"
-                    parent.tacticalConstructionToggleButton.style = "tactical-construction-button-style-enabled"
-                end
+                player.set_shortcut_toggled(gui.TOGGLE_BUTTON_PROTOTYPE_NAME, global.tc_player_state[player.index].toggled)
             end
         end
     end
 end
 
-function gui.register_events(click_callback)
-    script.on_event(defines.events.on_gui_click, gui.on_click )
-    gui.click_callback = click_callback
+function gui.register_events(toggle_callback)
+    script.on_event(defines.events.on_lua_shortcut, gui.on_lua_shortcut)  -- handles GUI click
+    script.on_event("toggle-personal-roboport-priority", gui.on_hot_key)  -- handles hot key
+    gui.toggle_callback = toggle_callback
 end
 
 return gui
