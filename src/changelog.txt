@@ -1,8 +1,10 @@
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.1
-Date: 2020-XX-XX
-  Info:
-    - TODO
+Date: 2020-04-25
+  Major Features:
+    - Support for prioritizing player roboport for deconstructions.
+      - Thanks to the Factorio developers for adding the required filter parameter to surface.find_entities_filtered()!
+      - Works on 0.18.21 or newer. Older versions of 0.18.x should still work but without the new behavior (I added version detection logic).
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.0
 Date: 2020-04-18
