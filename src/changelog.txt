@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.2
+Date: 2020-04-28
+  Bugfixes:
+    - Sync force logistics request attributes to alternate game force upon every button toggle.
+      - This fixes a crash that could occur upon toggling the button if the alternate force didn't have the same attributes set as the player's primary force.
+---------------------------------------------------------------------------------------------------
 Version: 0.2.1
 Date: 2020-04-25
   Major Features:
