@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.3
+Date: 2020-04-29
+  Bugfixes:
+    - Preventive medicine: Remove use of consuming='script-only' option from keyboard shortcut prototype.
+      - (Factorio devs recently announced this option will break in an upcoming update.)
+---------------------------------------------------------------------------------------------------
 Version: 0.2.2
 Date: 2020-04-28
   Bugfixes:
