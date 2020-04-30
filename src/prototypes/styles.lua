@@ -3,8 +3,7 @@ data:extend(
         {
             type = "custom-input",
             name = "toggle-personal-roboport-priority",
-            key_sequence = "ALT + F",
-            consuming = "script-only"
+            key_sequence = "ALT + F"
         },
         {
             type = "shortcut",
