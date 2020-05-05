@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.4
+Date: 2020-05-05
+  Bugfixes:
+    - Fix research replication logic between primary -> alternative forces in game to NOT corrupt the primary force's current research level for space science technologies.
+      - Sorry about this bug. Programming is hard :-(
+---------------------------------------------------------------------------------------------------
 Version: 0.2.3
 Date: 2020-04-29
   Bugfixes:
