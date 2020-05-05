@@ -170,7 +170,10 @@ function force_manager._sync_single_tech_to_alternative_force(technology)
         local alternative_force = game.forces[alternative_force_name]
 
         if alternative_force ~= nil then
-            base_force.technologies[technology.name].researched = technology.researched
+            alternative_force.technologies[technology.name].researched = technology.researched
+            if technology.level ~= nil then
+                alternative_force.technologies[technology.name].level = technology.level
+            end
             force_manager._sync_force_bonuses(base_force, alternative_force)
         end
     end
