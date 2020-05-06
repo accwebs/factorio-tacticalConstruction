@@ -60,6 +60,8 @@ end
 local function on_mod_init()
     global.tc_debug = false
     global.to_be_deconstructed_filter_supported = false
+    global.recreate_forces = false
+    global.current_mod_state_version = 2
     if global.tc_debug == true then
         global.tc_renders = {}
     end
@@ -165,9 +167,24 @@ local function on_toggle(player)
 end
 
 local function garbage_collect(event)
-    reset_stale_players()
-    entity_manager.garbage_collect()
-    force_manager.garbage_collect()
+    -- if a mod version upgrade has signaled that our alternative forces are somehow in a bad state and need re-creating, do that now as part of GC
+    if global.recreate_forces == true then
+        for _, player in pairs(game.players) do
+            reset_player(player)
+        end
+        entity_manager.garbage_collect()
+        force_manager.garbage_collect(true)
+        for _, player in pairs(game.players) do
+            if player.connected == true then
+                init_player(player)
+            end
+        end
+        global.recreate_forces = false
+    else
+        reset_stale_players()
+        entity_manager.garbage_collect()
+        force_manager.garbage_collect(false)
+    end
 end
 
 script.on_init(on_mod_init)

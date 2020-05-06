@@ -237,7 +237,7 @@ function force_manager.restore_player_original_force(player)
     end
 end
 
-function force_manager.garbage_collect()
+function force_manager.garbage_collect(reset_regardless_of_player_status)
     for _, force in pairs(game.forces) do
         local base_name, is_alternative = force_manager._parse_force_name(force.name)
         if is_alternative == true then
@@ -256,7 +256,7 @@ function force_manager.garbage_collect()
                     delete_force = false
                 end
             end
-            if delete_force == true then
+            if delete_force == true or reset_regardless_of_player_status == true then
                 local alternative_force = game.forces[alternative_force_name]
                 game.merge_forces(alternative_force, base_force)
             end
