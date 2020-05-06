@@ -58,6 +58,9 @@ local function reset_stale_players()
 end
 
 local function on_mod_init()
+    if not global.tc_player_state then
+        global.tc_player_state = {}
+    end
     global.tc_debug = false
     global.to_be_deconstructed_filter_supported = false
     global.recreate_forces = false
@@ -66,7 +69,9 @@ local function on_mod_init()
         global.tc_renders = {}
     end
     for _, player in pairs(game.players) do
-        init_player(player)
+        if player.connected == true then
+            init_player(player)
+        end
     end
 end
 
