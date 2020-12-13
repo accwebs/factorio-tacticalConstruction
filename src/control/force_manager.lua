@@ -216,7 +216,6 @@ function force_manager.switch_player_to_alternative_force(player)
         -- ensure alternative force has character logistic request characteristics set to same value as main force
         alternative_force.character_logistic_requests = player.force.character_logistic_requests
         alternative_force.character_trash_slot_count = player.force.character_trash_slot_count
-        alternative_force.auto_character_trash_slots = player.force.auto_character_trash_slots
 
         local switched_robots = force_manager._switch_player_robots_force(player, alternative_force)
         local req_counts = force_manager._back_up_player_logistic_request_counts(player)
