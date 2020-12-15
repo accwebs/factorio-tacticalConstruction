@@ -1,4 +1,9 @@
 ---------------------------------------------------------------------------------------------------
+Version: 0.2.6
+Date: 2020-12-14
+  Bugfixes:
+    - Fix mod_gui crash when first enabling the mod on an existing save or upgrading the mod (i.e. migration scripts run).
+---------------------------------------------------------------------------------------------------
 Version: 0.2.5
 Date: 2020-12-13
   Changes:

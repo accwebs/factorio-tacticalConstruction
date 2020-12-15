@@ -1,4 +1,4 @@
-require("mod-gui")
+local mod_gui = require("mod-gui")
 
 for _, player in pairs(game.players) do
     local parent = mod_gui.get_frame_flow(player)
