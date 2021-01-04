@@ -58,9 +58,13 @@ local function reset_stale_players()
 end
 
 local function on_mod_init()
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state then
         global.tc_player_state = {}
     end
+    global.globally_disabled = false
     global.tc_debug = false
     global.to_be_deconstructed_filter_supported = false
     global.recreate_forces = false
@@ -76,10 +80,16 @@ local function on_mod_init()
 end
 
 local function on_player_joined(event)
+    if global.globally_disabled then
+        return
+    end
     init_player(game.players[event.player_index])
 end
 
 local function on_player_left(event)
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state or not global.tc_player_state[event.player_index] then
         return
     end
@@ -87,6 +97,9 @@ local function on_player_left(event)
 end
 
 local function on_research_finished(event)
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state then
         return
     end
@@ -94,6 +107,9 @@ local function on_research_finished(event)
 end
 
 local function on_player_changed_position(event)
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state or not global.tc_player_state[event.player_index] then
         return
     end
@@ -105,6 +121,9 @@ local function on_player_changed_position(event)
 end
 
 local function on_player_changed_force(event)
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state or not global.tc_player_state[event.player_index] then
         return
     end
@@ -128,6 +147,9 @@ local function starts_with(str, start)
 end
 
 local function on_toggle(player)
+    if global.globally_disabled then
+        return
+    end
     if not global.tc_player_state or not global.tc_player_state[player.index] or not player.character then
         return
     end
@@ -171,7 +193,35 @@ local function on_toggle(player)
     end
 end
 
+local function on_global_disable(player)
+    if global.globally_disabled then
+        return
+    end
+
+    if not player.admin then
+        player.print({"disable.global-disable-you-not-admin"})
+        return
+    end
+    player.print({"disable.global-disable-starting"})
+
+    for _, player in pairs(game.players) do
+        reset_player(player)
+    end
+    entity_manager.garbage_collect()
+    force_manager.garbage_collect(true)
+    global.globally_disabled = true
+
+    for _, player in pairs(game.players) do
+        if player.connected == true then
+            player.print({"disable.global-disable-complete", player.name})
+        end
+    end
+end
+
 local function garbage_collect(event)
+    if global.globally_disabled then
+        return
+    end
     -- if a mod version upgrade has signaled that our alternative forces are somehow in a bad state and need re-creating, do that now as part of GC
     if global.recreate_forces == true then
         for _, player in pairs(game.players) do
@@ -201,4 +251,4 @@ script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
 script.on_event(defines.events.on_pre_player_died, on_player_left)
 script.on_nth_tick(7200, garbage_collect) -- every 2 minutes-ish
 entity_manager.init(force_manager)
-gui.register_events(on_toggle)
+gui.register_events(on_toggle, on_global_disable)
