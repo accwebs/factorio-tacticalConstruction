@@ -3,6 +3,8 @@ Version: 0.3.0
 Date: 2021-01-03
   Major Features:
     - Support a toggle button (hidden by default; use mod settings to unhide it) that can globally clean up the mod's alternate forces that it creates on the file. You can use this button to cleanse your file before you disable the mod entirely :-)
+  Changes:
+    - Delete the now-unnecessary version-detection logic that was being used to determine whether the luaSurface.find_entities_filtered() API supported to_be_deconstructed=true. Yay Factorio 1.1!
 ---------------------------------------------------------------------------------------------------
 Version: 0.2.6
 Date: 2020-12-14

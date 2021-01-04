@@ -66,7 +66,6 @@ local function on_mod_init()
     end
     global.globally_disabled = false
     global.tc_debug = false
-    global.to_be_deconstructed_filter_supported = false
     global.recreate_forces = false
     global.current_mod_state_version = 2
     if global.tc_debug == true then
@@ -152,32 +151,6 @@ local function on_toggle(player)
     end
     if not global.tc_player_state or not global.tc_player_state[player.index] or not player.character then
         return
-    end
-
-    -- determine whether the new to_be_constructed entity search filter is expected to work and save that info
-    local base_mod_version = game.active_mods["base"]
-    if not base_mod_version then
-        base_mod_version = ""
-    end
-    local expected_prefix = "0.18."
-    -- not starting with 0.18. so we just assume the new entity search filter is supported because what is this version?
-    if starts_with(base_mod_version, expected_prefix) == false then
-        global.to_be_deconstructed_filter_supported = true
-    else
-        -- extract the 'patch' version number as a string
-        local remaining_version_str = string.sub(base_mod_version, #expected_prefix+1)
-        -- make sure what we extracted doesn't have any more dots. It shouldn't but just in case version format changes later...
-        --   If this is something we don't understand, just assume the new entity search filter works
-        if string.find(remaining_version_str, "%.") or #remaining_version_str == 0 then
-            global.to_be_deconstructed_filter_supported = true
-        else
-            -- if version >= 0.18.21, then new filter works
-            if tonumber(remaining_version_str) >= 21 then
-                global.to_be_deconstructed_filter_supported = true
-            else
-                global.to_be_deconstructed_filter_supported = false
-            end
-        end
     end
 
     local base_force = entity_manager.force_manager.fetch_base_force(player.force)

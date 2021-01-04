@@ -290,15 +290,13 @@ function entity_manager.find_and_convert_player_range_construction_entities(play
                     entity_manager._set_entity_alternative_force(entity)
                 end
 
-                if global.to_be_deconstructed_filter_supported == true then
-                    local entities = player.surface.find_entities_filtered({
-                        area=bounding_box,
-                        force=base_force,
-                        to_be_deconstructed=true,
-                    })
-                    for _, entity in pairs(entities) do
-                        entity_manager._set_entity_alternative_force(entity)
-                    end
+                local entities = player.surface.find_entities_filtered({
+                    area=bounding_box,
+                    force=base_force,
+                    to_be_deconstructed=true,
+                })
+                for _, entity in pairs(entities) do
+                    entity_manager._set_entity_alternative_force(entity)
                 end
 
                 global.tc_player_state[player.index].dirty = 2
