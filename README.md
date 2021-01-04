@@ -39,7 +39,10 @@ Hence this horrible idea of a mod was formed. When you toggle the button on, you
 
 1. This mod auto-creates one alternative (allied) force per each player force. In most games there is one player force (thus, only one alternative force will be created); however, this mod tries to handle scenarios where there are multiple player forces (each getting its own alternate force).
 2. Due to the alternate force behavior, once you save your game with this mod active, it's probably not advisable to disable the mod on that save file moving forward.  Tactical Construction makes a point to clean up any alternative forces when there are no longer any connected players that might use them; however, if you disable the mod, that logic will of course not be able to run to clean up any alternative forces that were still determined to be needed at the point of save.
-   - I **may** eventually add a console command that can be used to tell the mod to clean itself up and go into a permanent 'zombie' state. This could be run right before saving the game, after which the mod could be disabled. File a Github issue if something like this would be of use to you.
+   - As of version 0.3.0, there is a UI button that allows you to clean up alternative forces on an existing save file. The mod is then put into a zombie state.
+   - Button is hidden by default.  Use Settings -> Mod Settings to display it.
+   - If you regret your decision to nuke the mod on a file, you *CAN* re-enable the mod by globally disabling the mod, loading your file, saving your file (so that the saved game now has no record of the mod at all) and then re-enabling the mod.  Upon re-loading your file, the mod will re-initialize itself and re-create the alternate forces that it needs.
+3. Avoid researching stuff while you are living on the alternate force in the game (i.e. you have the prioritize button on).
 
 ## Limitations
 
