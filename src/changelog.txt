@@ -2,7 +2,7 @@
 Version: 0.4.0
 Date: 2021-01-17
   Minor Features:
-    - TODO
+    - Prevent users from accidentally performing research while they are on the alternative game force (for prioritize local construction).
 ---------------------------------------------------------------------------------------------------
 Version: 0.3.0
 Date: 2021-01-03

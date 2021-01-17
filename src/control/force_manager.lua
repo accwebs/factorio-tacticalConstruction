@@ -263,6 +263,21 @@ function force_manager.garbage_collect(reset_regardless_of_player_status)
     end
 end
 
+function force_manager.notify_research_started(event)
+    local research_force = event.research.force
+    local base_force_name, is_force_alternative = force_manager._parse_force_name(research_force.name)
+
+    if is_force_alternative then
+        research_force.research_queue = nil
+        for _, player in pairs(game.players) do
+            if player.connected == true then
+                player.print({"caution.advise-do-not-research-on-alt-force", player.name})
+            end
+        end
+    end
+end
+
+
 function force_manager.notify_research_finished(event)
     force_manager._sync_single_tech_to_alternative_force(event.research)
 end

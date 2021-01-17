@@ -95,6 +95,16 @@ local function on_player_left(event)
     reset_player(game.players[event.player_index])
 end
 
+local function on_research_started(event)
+    if global.globally_disabled then
+        return
+    end
+    if not global.tc_player_state then
+        return
+    end
+    force_manager.notify_research_started(event)
+end
+
 local function on_research_finished(event)
     if global.globally_disabled then
         return
@@ -218,6 +228,7 @@ end
 script.on_init(on_mod_init)
 script.on_event(defines.events.on_player_joined_game, on_player_joined)
 script.on_event(defines.events.on_player_left_game, on_player_left)
+script.on_event(defines.events.on_research_started, on_research_started)
 script.on_event(defines.events.on_research_finished, on_research_finished)
 script.on_event(defines.events.on_player_changed_position, on_player_changed_position)
 script.on_event(defines.events.on_player_changed_force, on_player_changed_force)
