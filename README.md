@@ -8,7 +8,9 @@ Tactical Construction is a mod for the video game [Factorio](https://factorio.co
 
 Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/TacticalConstruction
 
-**CAUTION: This mod is still in BETA; you may encounter crashes/corruption.**
+**CAUTION: This mod applies force changes to any game loaded with the mod active; these changes are not reverted if you later disable the mod, unless you first instruct this mod to undo the changes to your file(s). Please read the full mod description so you know what you're getting into.**
+
+**This mod is still in BETA; you may encounter crashes/corruption.**
 
 ## How this Came to Be
 
@@ -41,8 +43,7 @@ Hence this horrible idea of a mod was formed. When you toggle the button on, you
 2. Due to the alternate force behavior, once you save your game with this mod active, it's probably not advisable to disable the mod on that save file moving forward.  Tactical Construction makes a point to clean up any alternative forces when there are no longer any connected players that might use them; however, if you disable the mod, that logic will of course not be able to run to clean up any alternative forces that were still determined to be needed at the point of save.
    - As of version 0.3.0, there is a UI button that allows you to clean up alternative forces on an existing save file. The mod is then put into a zombie state.
    - Button is hidden by default.  Use Settings -> Mod Settings to display it.
-   - If you regret your decision to nuke the mod on a file, you *CAN* re-enable the mod by globally disabling the mod, loading your file, saving your file (so that the saved game now has no record of the mod at all) and then re-enabling the mod.  Upon re-loading your file, the mod will re-initialize itself and re-create the alternate forces that it needs.
-3. Avoid researching stuff while you are living on the alternate force in the game (i.e. you have the prioritize button on).
+   - If you regret your decision to permanently clean up the mod state on a file, you *CAN* re-enable the mod by globally disabling the mod, loading your file, saving your file (so that the saved game now has no record of the mod at all) and then re-enabling the mod.  Upon re-loading your file, the mod will re-initialize itself and re-create the alternate forces that it needs.
 
 ## Limitations
 
@@ -50,7 +51,7 @@ Hence this horrible idea of a mod was formed. When you toggle the button on, you
    1. Enhancement request submitted here: https://forums.factorio.com/viewtopic.php?t=82644
    2. Workaround: Set player colors to the same value :-)
 2. Map fog-of-war: When players have the feature enabled, they are moved to a different force in the game. This means that the discovered areas of the map will be reset. I've enabled map sharing between the two forces, but it only seems to share scans of a sector upon next active scan. Thus, your map will likely be significantly-less explored while you have the feature on.
-3. Force weapon attributes: At present I don't sync a bunch of force damage attributes from the primary force over the the alternative one. So if you're gonna fight, maybe toggle the feature off first :-)
+3. Force weapon attributes: At present I don't sync a bunch of force damage attributes from the primary force over the the alternative one. So if you're gonna fight, maybe toggle the prioritize button off first :-)
 
 ## Technical Details
 
