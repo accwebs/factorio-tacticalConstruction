@@ -10,8 +10,6 @@ Tactical Construction on the Factorio mod portal: https://mods.factorio.com/mod/
 
 **CAUTION: This mod applies force changes to any game loaded with the mod active; these changes are not reverted if you later disable the mod, unless you first instruct this mod to undo the changes to your file(s). Please read the full mod description so you know what you're getting into.**
 
-**This mod is still in BETA; you may encounter crashes/corruption.**
-
 ## How this Came to Be
 
 My Factorio friends and I love construction robots. After all, who doesn't?
