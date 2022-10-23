@@ -1,4 +1,14 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.1.0
+Date: 2022-10-23
+  Minor Features:
+    - Make use of the new luaForce.color/luaForce.custom_color APIs to prevent base colors from changing whenever the prioritize button of the first player on that force is toggled.
+      - In order to accomplish this, I had to reset the toggle state for all players when another mod moves a player between forces. Please let me know if this causes problems.
+  Bugfixes:
+    - Garbage collect mod's data for player in on_player_removed() event. (Removing a player entirely from a save is atypical.)
+  Changes:
+    - Redesign alt force garbage collection logic a bit.
+---------------------------------------------------------------------------------------------------
 Version: 1.0.0
 Date: 2021-01-27
   Info:

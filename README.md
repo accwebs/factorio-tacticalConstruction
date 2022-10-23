@@ -47,7 +47,7 @@ Hence this horrible idea of a mod was formed. When you toggle the button on, you
 
 1. Base entity disco: At present, a force's "color" (i.e. the color applied to all entities on that force) appears to be automatically equivalent to the color of the first player member of the force. As a result, when player #1 in a multiplayer game toggles the feature (and gets moved to the alternative force), the primary force color will change to player #2's color. Upon player #1 toggling the feature off, the force color reverts. Thus, you get a sort of "light show" every time player #1 uses this feature.
    1. Enhancement request submitted here: https://forums.factorio.com/viewtopic.php?t=82644
-   2. Workaround: Set player colors to the same value :-)
+   2. 2022-10-23 update: The Factorio devs added an API a few months ago to lock the force colors! Tactical Construction v1.1.0+ adds logic to use it!
 2. Map fog-of-war: When players have the feature enabled, they are moved to a different force in the game. This means that the discovered areas of the map will be reset. I've enabled map sharing between the two forces, but it only seems to share scans of a sector upon next active scan. Thus, your map will likely be significantly-less explored while you have the feature on.
 3. Force weapon attributes: At present I don't sync a bunch of force damage attributes from the primary force over the the alternative one. So if you're gonna fight, maybe toggle the prioritize button off first :-)
 

@@ -39,6 +39,9 @@ function force_manager.fetch_alternative_force(current_force)
             alternative_force.share_chart = true
             base_force.share_chart = true
             force_manager._sync_all_tech_to_force(base_force, alternative_force)
+            if global.luaforce_color_apis_present == true then
+                alternative_force.custom_color = base_force.color
+            end
         end
 
         return game.forces[alternative_force_name]
@@ -258,6 +261,43 @@ function force_manager.garbage_collect(reset_regardless_of_player_status)
             if delete_force == true or reset_regardless_of_player_status == true then
                 local alternative_force = game.forces[alternative_force_name]
                 game.merge_forces(alternative_force, base_force)
+            end
+        else 
+            if reset_regardless_of_player_status == true then
+                force.custom_color = nil
+            end
+        end
+    end
+    if global.luaforce_color_apis_present == true and reset_regardless_of_player_status == false then
+        for _, force in pairs(game.forces) do
+            local base_name, is_alternative = force_manager._parse_force_name(force.name)
+            if is_alternative == false then
+                local alternative_force_name = force_manager._create_alternative_force_name(base_name)
+                if not game.forces[alternative_force_name] then
+                    force.custom_color = nil
+                end
+            end
+        end
+    end
+end
+
+-- pre: players must all be on their primary forces
+function force_manager.read_and_lock_force_colors()
+    if global.luaforce_color_apis_present == true then
+        -- lock the color of all primary forces
+        for _, force in pairs(game.forces) do
+            local base_name, is_alternative = force_manager._parse_force_name(force.name)
+            if is_alternative == false then
+                force.custom_color = nil  -- set back to dynamic computation temporarily
+                force.custom_color = force.color
+            end
+        end
+        -- set the color of all 'alternative' forces to match the color of the primary force
+        for _, force in pairs(game.forces) do
+            local base_name, is_alternative = force_manager._parse_force_name(force.name)
+            if is_alternative == true then
+                local base_force = game.forces[base_name]
+                force.custom_color = base_force.color
             end
         end
     end
